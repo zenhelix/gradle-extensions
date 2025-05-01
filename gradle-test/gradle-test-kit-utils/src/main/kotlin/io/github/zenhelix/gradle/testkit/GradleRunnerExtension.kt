@@ -1,5 +1,7 @@
 package io.github.zenhelix.gradle.testkit
 
+import io.github.zenhelix.gradle.testkit.parser.GradleOutput
+import io.github.zenhelix.gradle.testkit.parser.parseGradleTasksOutput
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import java.io.File
@@ -16,6 +18,21 @@ public fun gradleRunnerDebug(projectDir: File, initializer: GradleRunnerBuilder.
     withDebug(true).forwardOutput()
     initializer()
 }
+
+public fun gradleTasksRunner(
+    projectDir: File,
+    module: String? = null,
+    showAll: Boolean = true,
+    initializer: GradleRunnerBuilder.() -> Unit = {}
+): GradleOutput = gradleRunner(projectDir) {
+    if (showAll) {
+        printAllTasks(module)
+    } else {
+        printTasks(module)
+    }
+    forwardOutput()
+    initializer()
+}.let { parseGradleTasksOutput(it.output) }
 
 public class GradleRunnerBuilder(private val delegate: GradleRunner) {
     private val tasks = linkedSetOf<GradleTask>()
