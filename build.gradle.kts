@@ -59,6 +59,7 @@ configure(subprojects.filter { it.childProjects.isEmpty() }) {
             }
         }
     }
+
 }
 
 configure(subprojects.filter { it.name.contains("gradle-extensions-platform-").not() }) {
@@ -71,4 +72,6 @@ configure(subprojects.filter { it.name.contains("gradle-extensions-platform-").n
             }
         }
     }
+
+    tasks.test { useJUnitPlatform() }
 }
