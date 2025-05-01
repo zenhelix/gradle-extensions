@@ -5,132 +5,79 @@ public data class TaskCategory(val name: String, val tasks: List<GradleTask>)
 public data class GradleRule(val pattern: String, val description: String)
 public data class GradleOutput(val categories: List<TaskCategory>, val rules: List<GradleRule>)
 
+private sealed interface LineType
+private data class CategoryHeader(val name: String) : LineType
+private data object RulesHeader : LineType
+private data object Divider : LineType
+private data class Content(val text: String) : LineType
+private data object EmptyLine : LineType
+
 public fun parseGradleTasksOutput(output: String): GradleOutput {
-    val lines = output.lines()
-    val categories = mutableListOf<TaskCategory>()
-    val rules = mutableListOf<GradleRule>()
 
-    var i = 0
-    while (i < lines.size) {
-        val line = lines[i].trim()
+    fun normalizeCategoryName(categoryLine: String): String =
+        categoryLine.replace(" tasks", "").lowercase()
 
-        if (isCategoryHeaderLine(line) && hasFollowingDivider(lines, i)) {
-            val categoryName = normalizeCategoryName(line)
+    fun String.classify(): LineType = when {
+        isBlank() -> EmptyLine
+        trim().contains(" tasks") -> CategoryHeader(normalizeCategoryName(trim()))
+        trim() == "Rules" -> RulesHeader
+        trim().isNotEmpty() && trim().all { it == '-' } -> Divider
+        else -> Content(trim())
+    }
 
-            val contentIndex = findContentIndexAfterHeader(lines, i)
-            i = contentIndex
+    val lineTypes = output.lineSequence().map { it.classify() }
 
-            val (tasks, newIndex) = collectTasks(lines, i)
-            i = newIndex
+    val sections = lineTypes
+        .windowed(3, 1, partialWindows = true)
+        .fold(Pair(emptyList<List<LineType>>(), mutableListOf<LineType>())) { (sections, currentSection), window ->
+            val isSectionStart = window.size >= 2 &&
+                    (window[0] is CategoryHeader || window[0] is RulesHeader) &&
+                    window[1] is Divider
 
-            if (tasks.isNotEmpty()) {
-                categories.add(TaskCategory(categoryName, tasks))
+            if (isSectionStart && currentSection.isNotEmpty()) {
+                Pair(sections + listOf(currentSection.toList()), mutableListOf<LineType>().apply { addAll(window) })
+            } else {
+                currentSection.addAll(window.drop(if (currentSection.isEmpty()) 0 else window.size - 1))
+                Pair(sections, currentSection)
             }
         }
-        else if (isRulesHeaderLine(line) && hasFollowingDivider(lines, i)) {
-            val contentIndex = findContentIndexAfterHeader(lines, i)
-            i = contentIndex
+        .let { (sections, currentSection) ->
+            if (currentSection.isNotEmpty()) sections + listOf(currentSection) else sections
+        }
 
-            val (collectedRules, newIndex) = collectRules(lines, i)
-            rules.addAll(collectedRules)
-            i = newIndex
+    val categories = sections
+        .filter { it.isNotEmpty() && it.first() is CategoryHeader }
+        .mapNotNull { section ->
+            val header = section.first() as CategoryHeader
+            val tasks = section
+                .dropWhile { it !is Content }
+                .takeWhile { it is Content }
+                .mapNotNull {
+                    if (it is Content) {
+                        val parts = it.text.split(" - ", limit = 2)
+                        if (parts.size == 2) {
+                            GradleTask(parts[0].trim(), parts[1].trim())
+                        } else {
+                            GradleTask(it.text)
+                        }
+                    } else null
+                }
+
+            if (tasks.isNotEmpty()) TaskCategory(header.name, tasks) else null
         }
-        else {
-            i++
-        }
-    }
+
+    val rules = sections
+        .find { it.isNotEmpty() && it.first() is RulesHeader }
+        ?.dropWhile { it !is Content }
+        ?.takeWhile { it is Content && it.text.contains("Pattern:") }
+        ?.mapNotNull { line ->
+            if (line is Content && line.text.startsWith("Pattern:")) {
+                val parts = line.text.removePrefix("Pattern:").split(":", limit = 2)
+                if (parts.size == 2) {
+                    GradleRule(parts[0].trim(), parts[1].trim())
+                } else null
+            } else null
+        } ?: emptyList()
 
     return GradleOutput(categories, rules)
-}
-
-private fun normalizeCategoryName(categoryLine: String): String {
-    return categoryLine.replace(" tasks", "").lowercase()
-}
-
-private fun isCategoryHeaderLine(line: String): Boolean {
-    return line.contains(" tasks")
-}
-
-private fun isRulesHeaderLine(line: String): Boolean {
-    return line == "Rules"
-}
-
-private fun isDividerLine(line: String): Boolean {
-    return line.isNotEmpty() && line.all { it == '-' }
-}
-
-private fun hasFollowingDivider(lines: List<String>, index: Int): Boolean {
-    return index + 1 < lines.size && isDividerLine(lines[index + 1].trim())
-}
-
-private fun isNewSectionHeader(lines: List<String>, index: Int): Boolean {
-    val line = lines[index].trim()
-    return (isCategoryHeaderLine(line) && hasFollowingDivider(lines, index)) ||
-            (isRulesHeaderLine(line) && hasFollowingDivider(lines, index))
-}
-
-private fun findContentIndexAfterHeader(lines: List<String>, headerIndex: Int): Int {
-    var index = headerIndex + 1
-
-    while (index < lines.size) {
-        if (isDividerLine(lines[index].trim())) {
-            return index + 1
-        }
-        index++
-    }
-
-    return index
-}
-
-private fun collectTasks(lines: List<String>, startIndex: Int): Pair<List<GradleTask>, Int> {
-    val tasks = mutableListOf<GradleTask>()
-    var i = startIndex
-
-    while (i < lines.size) {
-        val line = lines[i].trim()
-
-        if (line.isEmpty()) {
-            i++
-            continue
-        }
-
-        if (isNewSectionHeader(lines, i)) {
-            break
-        }
-
-        val parts = line.split(" - ", limit = 2)
-        tasks.add(
-            if (parts.size == 2) {
-                GradleTask(parts[0].trim(), parts[1].trim())
-            } else {
-                GradleTask(line)
-            }
-        )
-
-        i++
-    }
-
-    return Pair(tasks, i)
-}
-
-private fun collectRules(lines: List<String>, startIndex: Int): Pair<List<GradleRule>, Int> {
-    val rules = mutableListOf<GradleRule>()
-    var i = startIndex
-
-    while (i < lines.size) {
-        val line = lines[i].trim()
-
-        if (line.startsWith("Pattern:")) {
-            val parts = line.removePrefix("Pattern:").split(":", limit = 2)
-            if (parts.size == 2) {
-                rules.add(GradleRule(parts[0].trim(), parts[1].trim()))
-            }
-        } else if (line.contains("BUILD SUCCESSFUL")) {
-            break
-        }
-
-        i++
-    }
-
-    return Pair(rules, i)
 }

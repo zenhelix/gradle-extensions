@@ -9,8 +9,6 @@ class GradleTaskOutputParserTest {
     fun parseGradleTasksOutput() {
         val output = """
             > Configure project :
-            w: Classpath entry points to a non-existent location: C:\Users\kotya_jopa\IdeaProjects\maven-central-publish\build\classes\java\main
-            w: Classpath entry points to a non-existent location: C:\Users\kotya_jopa\IdeaProjects\maven-central-publish\build\classes\java\main
 
             > Task :tasks
 
