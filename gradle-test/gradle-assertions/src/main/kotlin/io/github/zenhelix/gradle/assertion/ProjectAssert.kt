@@ -2,157 +2,170 @@ package io.github.zenhelix.gradle.assertion
 
 import io.github.zenhelix.gradle.exist
 import org.assertj.core.api.AbstractAssert
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.DependencySet
 
 public class ProjectAssert(actual: Project) : AbstractAssert<ProjectAssert, Project>(actual, ProjectAssert::class.java) {
 
     public companion object {
         public fun assertThat(actual: Project): ProjectAssert = ProjectAssert(actual)
+
+        private const val API: String = "api"
+        private const val IMPLEMENTATION: String = "implementation"
+        private const val TEST_IMPLEMENTATION: String = "testImplementation"
+        private const val COMPILE_ONLY: String = "compileOnly"
+        private const val TEST_COMPILE_ONLY: String = "testCompileOnly"
+        private const val RUNTIME_ONLY: String = "runtimeOnly"
+        private const val TEST_RUNTIME_ONLY: String = "testRuntimeOnly"
+        private const val ANNOTATION_PROCESSOR: String = "annotationProcessor"
+        private const val KAPT: String = "kapt"
+    }
+
+    public fun hasConfiguration(configuration: String): ProjectAssert = apply {
+        assertThat(actual.configurations.findByName(configuration))
+            .describedAs("Configuration '$configuration' should exist")
+            .isNotNull
     }
 
     public fun containsDependency(configuration: String, group: String?, module: String, version: String? = null): ProjectAssert = apply {
-        val config = actual.configurations.findByName(configuration)
-        assertThat(config).isNotNull
-        assertThat(config!!.dependencies.exist(group, module, version))
+        hasConfiguration(configuration)
+        assertThat(actual.configurations.getByName(configuration).dependencies.exist(group, module, version))
             .describedAs("Configuration '$configuration' should contain dependency '$group:$module${version?.let { ":$it" } ?: ""}'")
-            .isNotNull().isTrue()
+            .isTrue()
     }
 
     public fun doesNotContainDependency(configuration: String, group: String?, module: String, version: String? = null): ProjectAssert = apply {
-        val config = actual.configurations.findByName(configuration)
-        assertThat(config).isNotNull
-            assertThat(config!!.dependencies.exist(group, module, version))
-                .describedAs("Configuration '$configuration' should not contain dependency '$group:$module${version?.let { ":$it" } ?: ""}'")
-                .isFalse()
+        hasConfiguration(configuration)
+        assertThat(actual.configurations.getByName(configuration).dependencies.exist(group, module, version))
+            .describedAs("Configuration '$configuration' should not contain dependency '$group:$module${version?.let { ":$it" } ?: ""}'")
+            .isFalse()
     }
 
     public fun implementationContains(group: String?, module: String, version: String? = null): ProjectAssert =
-        containsDependency("implementation", group, module, version)
+        containsDependency(IMPLEMENTATION, group, module, version)
 
     public fun runtimeOnlyContains(group: String?, module: String, version: String? = null): ProjectAssert =
-        containsDependency("runtimeOnly", group, module, version)
+        containsDependency(RUNTIME_ONLY, group, module, version)
 
     public fun testImplementationContains(group: String?, module: String, version: String? = null): ProjectAssert =
-        containsDependency("testImplementation", group, module, version)
+        containsDependency(TEST_IMPLEMENTATION, group, module, version)
 
     public fun annotationProcessorContains(group: String?, module: String, version: String? = null): ProjectAssert =
-        containsDependency("annotationProcessor", group, module, version)
+        containsDependency(ANNOTATION_PROCESSOR, group, module, version)
 
     public fun apiContains(group: String?, module: String, version: String? = null): ProjectAssert =
-        containsDependency("api", group, module, version)
+        containsDependency(API, group, module, version)
 
     public fun compileOnlyContains(group: String?, module: String, version: String? = null): ProjectAssert =
-        containsDependency("compileOnly", group, module, version)
+        containsDependency(COMPILE_ONLY, group, module, version)
 
     public fun testRuntimeOnlyContains(group: String?, module: String, version: String? = null): ProjectAssert =
-        containsDependency("testRuntimeOnly", group, module, version)
+        containsDependency(TEST_RUNTIME_ONLY, group, module, version)
 
     public fun testCompileOnlyContains(group: String?, module: String, version: String? = null): ProjectAssert =
-        containsDependency("testCompileOnly", group, module, version)
+        containsDependency(TEST_COMPILE_ONLY, group, module, version)
 
     public fun kaptContains(group: String?, module: String, version: String? = null): ProjectAssert =
-        containsDependency("kapt", group, module, version)
+        containsDependency(KAPT, group, module, version)
 
     public fun implementationDoesNotContain(group: String?, module: String, version: String? = null): ProjectAssert =
-        doesNotContainDependency("implementation", group, module, version)
+        doesNotContainDependency(IMPLEMENTATION, group, module, version)
 
     public fun runtimeOnlyDoesNotContain(group: String?, module: String, version: String? = null): ProjectAssert =
-        doesNotContainDependency("runtimeOnly", group, module, version)
+        doesNotContainDependency(RUNTIME_ONLY, group, module, version)
 
     public fun testImplementationDoesNotContain(group: String?, module: String, version: String? = null): ProjectAssert =
-        doesNotContainDependency("testImplementation", group, module, version)
+        doesNotContainDependency(TEST_IMPLEMENTATION, group, module, version)
 
     public fun annotationProcessorDoesNotContain(group: String?, module: String, version: String? = null): ProjectAssert =
-        doesNotContainDependency("annotationProcessor", group, module, version)
+        doesNotContainDependency(ANNOTATION_PROCESSOR, group, module, version)
 
     public fun apiDoesNotContain(group: String?, module: String, version: String? = null): ProjectAssert =
-        doesNotContainDependency("api", group, module, version)
+        doesNotContainDependency(API, group, module, version)
 
     public fun compileOnlyDoesNotContain(group: String?, module: String, version: String? = null): ProjectAssert =
-        doesNotContainDependency("compileOnly", group, module, version)
+        doesNotContainDependency(COMPILE_ONLY, group, module, version)
 
     public fun testRuntimeOnlyDoesNotContain(group: String?, module: String, version: String? = null): ProjectAssert =
-        doesNotContainDependency("testRuntimeOnly", group, module, version)
+        doesNotContainDependency(TEST_RUNTIME_ONLY, group, module, version)
 
     public fun testCompileOnlyDoesNotContain(group: String?, module: String, version: String? = null): ProjectAssert =
-        doesNotContainDependency("testCompileOnly", group, module, version)
+        doesNotContainDependency(TEST_COMPILE_ONLY, group, module, version)
 
     public fun kaptDoesNotContain(group: String?, module: String, version: String? = null): ProjectAssert =
-        doesNotContainDependency("kapt", group, module, version)
+        doesNotContainDependency(KAPT, group, module, version)
 
     public fun configurationIsEmpty(configuration: String): ProjectAssert = apply {
-        assertThat(actual.configurations.findByName(configuration)?.dependencies?.isEmpty())
+        hasConfiguration(configuration)
+        assertThat(actual.configurations.getByName(configuration).dependencies)
             .describedAs("Configuration '$configuration' should be empty")
-            .isNotNull().isTrue()
+            .isEmpty()
     }
 
-    public fun implementationIsEmpty(): ProjectAssert = configurationIsEmpty("implementation")
-    public fun runtimeOnlyIsEmpty(): ProjectAssert = configurationIsEmpty("runtimeOnly")
-    public fun testImplementationIsEmpty(): ProjectAssert = configurationIsEmpty("testImplementation")
-    public fun annotationProcessorIsEmpty(): ProjectAssert = configurationIsEmpty("annotationProcessor")
-    public fun apiIsEmpty(): ProjectAssert = configurationIsEmpty("api")
-    public fun compileOnlyIsEmpty(): ProjectAssert = configurationIsEmpty("compileOnly")
-    public fun testRuntimeOnlyIsEmpty(): ProjectAssert = configurationIsEmpty("testRuntimeOnly")
-    public fun testCompileOnlyIsEmpty(): ProjectAssert = configurationIsEmpty("testCompileOnly")
-    public fun kaptIsEmpty(): ProjectAssert = configurationIsEmpty("kapt")
+    public fun implementationIsEmpty(): ProjectAssert = configurationIsEmpty(IMPLEMENTATION)
+    public fun runtimeOnlyIsEmpty(): ProjectAssert = configurationIsEmpty(RUNTIME_ONLY)
+    public fun testImplementationIsEmpty(): ProjectAssert = configurationIsEmpty(TEST_IMPLEMENTATION)
+    public fun annotationProcessorIsEmpty(): ProjectAssert = configurationIsEmpty(ANNOTATION_PROCESSOR)
+    public fun apiIsEmpty(): ProjectAssert = configurationIsEmpty(API)
+    public fun compileOnlyIsEmpty(): ProjectAssert = configurationIsEmpty(COMPILE_ONLY)
+    public fun testRuntimeOnlyIsEmpty(): ProjectAssert = configurationIsEmpty(TEST_RUNTIME_ONLY)
+    public fun testCompileOnlyIsEmpty(): ProjectAssert = configurationIsEmpty(TEST_COMPILE_ONLY)
+    public fun kaptIsEmpty(): ProjectAssert = configurationIsEmpty(KAPT)
 
     public fun allConfigurationsAreEmpty(): ProjectAssert = apply {
         assertThat(actual.configurations.flatMap { it.allDependencies }).isEmpty()
     }
 
     public fun configurationIsNotEmpty(configuration: String): ProjectAssert = apply {
-        assertThat(actual.configurations.findByName(configuration)?.dependencies?.isEmpty())
+        hasConfiguration(configuration)
+        assertThat(actual.configurations.getByName(configuration).dependencies)
             .describedAs("Configuration '$configuration' should not be empty")
-            .isNotNull().isFalse()
+            .isNotEmpty()
     }
 
-    public fun implementationIsNotEmpty(): ProjectAssert = configurationIsNotEmpty("implementation")
-    public fun runtimeOnlyIsNotEmpty(): ProjectAssert = configurationIsNotEmpty("runtimeOnly")
-    public fun testImplementationIsNotEmpty(): ProjectAssert = configurationIsNotEmpty("testImplementation")
-    public fun annotationProcessorIsNotEmpty(): ProjectAssert = configurationIsNotEmpty("annotationProcessor")
-    public fun apiIsNotEmpty(): ProjectAssert = configurationIsNotEmpty("api")
-    public fun compileOnlyIsNotEmpty(): ProjectAssert = configurationIsNotEmpty("compileOnly")
-    public fun testRuntimeOnlyIsNotEmpty(): ProjectAssert = configurationIsNotEmpty("testRuntimeOnly")
-    public fun testCompileOnlyIsNotEmpty(): ProjectAssert = configurationIsNotEmpty("testCompileOnly")
-    public fun kaptIsNotEmpty(): ProjectAssert = configurationIsNotEmpty("kapt")
+    public fun implementationIsNotEmpty(): ProjectAssert = configurationIsNotEmpty(IMPLEMENTATION)
+    public fun runtimeOnlyIsNotEmpty(): ProjectAssert = configurationIsNotEmpty(RUNTIME_ONLY)
+    public fun testImplementationIsNotEmpty(): ProjectAssert = configurationIsNotEmpty(TEST_IMPLEMENTATION)
+    public fun annotationProcessorIsNotEmpty(): ProjectAssert = configurationIsNotEmpty(ANNOTATION_PROCESSOR)
+    public fun apiIsNotEmpty(): ProjectAssert = configurationIsNotEmpty(API)
+    public fun compileOnlyIsNotEmpty(): ProjectAssert = configurationIsNotEmpty(COMPILE_ONLY)
+    public fun testRuntimeOnlyIsNotEmpty(): ProjectAssert = configurationIsNotEmpty(TEST_RUNTIME_ONLY)
+    public fun testCompileOnlyIsNotEmpty(): ProjectAssert = configurationIsNotEmpty(TEST_COMPILE_ONLY)
+    public fun kaptIsNotEmpty(): ProjectAssert = configurationIsNotEmpty(KAPT)
 
     public fun configurationContainsExactly(configuration: String, vararg notions: String): ProjectAssert = apply {
+        hasConfiguration(configuration)
         assertThat(actual.configurations.getByName(configuration).dependencies.map {
             listOfNotNull(it.group, it.name, it.version).joinToString(":")
         }).containsExactlyInAnyOrder(*notions)
     }
 
     public fun implementationContainsExactly(vararg notions: String): ProjectAssert =
-        configurationContainsExactly("implementation", *notions)
+        configurationContainsExactly(IMPLEMENTATION, *notions)
 
     public fun runtimeOnlyContainsExactly(vararg notions: String): ProjectAssert =
-        configurationContainsExactly("runtimeOnly", *notions)
+        configurationContainsExactly(RUNTIME_ONLY, *notions)
 
     public fun testRuntimeOnlyContainsExactly(vararg notions: String): ProjectAssert =
-        configurationContainsExactly("testRuntimeOnly", *notions)
+        configurationContainsExactly(TEST_RUNTIME_ONLY, *notions)
 
     public fun testImplementationContainsExactly(vararg notions: String): ProjectAssert =
-        configurationContainsExactly("testImplementation", *notions)
+        configurationContainsExactly(TEST_IMPLEMENTATION, *notions)
 
     public fun annotationProcessorContainsExactly(vararg notions: String): ProjectAssert =
-        configurationContainsExactly("annotationProcessor", *notions)
+        configurationContainsExactly(ANNOTATION_PROCESSOR, *notions)
 
     public fun apiContainsExactly(vararg notions: String): ProjectAssert =
-        configurationContainsExactly("api", *notions)
+        configurationContainsExactly(API, *notions)
 
     public fun compileOnlyContainsExactly(vararg notions: String): ProjectAssert =
-        configurationContainsExactly("compileOnly", *notions)
+        configurationContainsExactly(COMPILE_ONLY, *notions)
 
     public fun testCompileOnlyContainsExactly(vararg notions: String): ProjectAssert =
-        configurationContainsExactly("testCompileOnly", *notions)
+        configurationContainsExactly(TEST_COMPILE_ONLY, *notions)
 
     public fun kaptContainsExactly(vararg notions: String): ProjectAssert =
-        configurationContainsExactly("kapt", *notions)
+        configurationContainsExactly(KAPT, *notions)
 
     public fun containsPlugin(pluginId: String): ProjectAssert = apply {
         assertThat(actual.plugins.hasPlugin(pluginId))
@@ -204,9 +217,10 @@ public class ProjectAssert(actual: Project) : AbstractAssert<ProjectAssert, Proj
     }
 
     public fun configurationHasDependenciesSize(configuration: String, expectedCount: Int): ProjectAssert = apply {
-        assertThat(actual.configurations.findByName(configuration)?.dependencies)
+        hasConfiguration(configuration)
+        assertThat( actual.configurations.getByName(configuration).dependencies)
             .describedAs("Configuration '$configuration' should have $expectedCount dependencies")
-            .isNotNull().hasSize(expectedCount)
+            .hasSize(expectedCount)
     }
 
     public fun pluginsHasSize(expectedCount: Int): ProjectAssert = apply {
