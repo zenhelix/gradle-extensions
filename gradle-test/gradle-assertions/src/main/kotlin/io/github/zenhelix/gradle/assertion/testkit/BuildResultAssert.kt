@@ -12,42 +12,170 @@ public class BuildResultAssert(actual: BuildResult) : AbstractAssert<BuildResult
         public fun assertThat(actual: BuildResult): BuildResultAssert = BuildResultAssert(actual)
 
         private const val BUILD_SUCCESSFUL_TEXT = "BUILD SUCCESSFUL"
+        private const val BUILD_FAILED_TEXT = "BUILD FAILED"
     }
 
-    public fun successfulBuild(): BuildResultAssert = apply {
-        assertThat(actual.output).contains(BUILD_SUCCESSFUL_TEXT)
+    public fun isSuccessful(): BuildResultAssert = apply {
+        outputContains(BUILD_SUCCESSFUL_TEXT)
     }
 
-    public fun unsuccessfulBuild(): BuildResultAssert = apply {
-        assertThat(actual.output).doesNotContain(BUILD_SUCCESSFUL_TEXT)
+    public fun isFailed(): BuildResultAssert = apply {
+        outputContains(BUILD_FAILED_TEXT)
     }
 
-    public fun successTasks(module: String, vararg task: String): BuildResultAssert = apply {
-        assertTasksByStatus(module = module, status = TaskOutcome.SUCCESS, task = task)
+    public fun outputContains(text: String): BuildResultAssert = apply {
+        assertThat(actual.output).contains(text)
     }
 
-    public fun failedTasks(module: String, vararg task: String): BuildResultAssert = apply {
-        assertTasksByStatus(module = module, status = TaskOutcome.FAILED, task = task)
+    public fun outputDoesNotContain(text: String): BuildResultAssert = apply {
+        assertThat(actual.output).doesNotContain(text)
     }
 
-    public fun upToDateTasks(module: String, vararg task: String): BuildResultAssert = apply {
-        assertTasksByStatus(module = module, status = TaskOutcome.UP_TO_DATE, task = task)
+    public fun containsSuccessTasks(module: String, vararg task: String): BuildResultAssert = apply {
+        containsTasksByStatus(module = module, status = TaskOutcome.SUCCESS, task = task)
     }
 
-    public fun skippedTasks(module: String, vararg task: String): BuildResultAssert = apply {
-        assertTasksByStatus(module = module, status = TaskOutcome.SKIPPED, task = task)
+    public fun containsFailedTasks(module: String, vararg task: String): BuildResultAssert = apply {
+        containsTasksByStatus(module = module, status = TaskOutcome.FAILED, task = task)
     }
 
-    public fun fromCacheTasks(module: String, vararg task: String): BuildResultAssert = apply {
-        assertTasksByStatus(module = module, status = TaskOutcome.FROM_CACHE, task = task)
+    public fun containsUpToDateTasks(module: String, vararg task: String): BuildResultAssert = apply {
+        containsTasksByStatus(module = module, status = TaskOutcome.UP_TO_DATE, task = task)
     }
 
-    public fun noSourceTasks(module: String, vararg task: String): BuildResultAssert = apply {
-        assertTasksByStatus(module = module, status = TaskOutcome.NO_SOURCE, task = task)
+    public fun containsSkippedTasks(module: String, vararg task: String): BuildResultAssert = apply {
+        containsTasksByStatus(module = module, status = TaskOutcome.SKIPPED, task = task)
     }
 
-    private fun assertTasksByStatus(module: String, status: TaskOutcome, vararg task: String) {
-        assertThat(GradleModule.of(actual).module(module).allTasksByStatus(status).map { it.name }).containsExactlyInAnyOrder(*task)
+    public fun containsFromCacheTasks(module: String, vararg task: String): BuildResultAssert = apply {
+        containsTasksByStatus(module = module, status = TaskOutcome.FROM_CACHE, task = task)
+    }
+
+    public fun containsNoSourceTasks(module: String, vararg task: String): BuildResultAssert = apply {
+        containsTasksByStatus(module = module, status = TaskOutcome.NO_SOURCE, task = task)
+    }
+
+    public fun containsTasksByStatus(module: String, status: TaskOutcome, vararg task: String) {
+        val tasksByStatus = GradleModule.of(actual).module(module).allTasksByStatus(status).map { it.name }
+        assertThat(tasksByStatus).contains(*task)
+    }
+
+    // Task outcome assertions regardless of module
+    public fun containsSuccessTasksInAnyModule(vararg task: String): BuildResultAssert = apply {
+        containsTasksByStatusInAnyModule(status = TaskOutcome.SUCCESS, task = task)
+    }
+
+    public fun containsFailedTasksInAnyModule(vararg task: String): BuildResultAssert = apply {
+        containsTasksByStatusInAnyModule(status = TaskOutcome.FAILED, task = task)
+    }
+
+    public fun containsUpToDateTasksInAnyModule(vararg task: String): BuildResultAssert = apply {
+        containsTasksByStatusInAnyModule(status = TaskOutcome.UP_TO_DATE, task = task)
+    }
+
+    public fun containsSkippedTasksInAnyModule(vararg task: String): BuildResultAssert = apply {
+        containsTasksByStatusInAnyModule(status = TaskOutcome.SKIPPED, task = task)
+    }
+
+    public fun containsFromCacheTasksInAnyModule(vararg task: String): BuildResultAssert = apply {
+        containsTasksByStatusInAnyModule(status = TaskOutcome.FROM_CACHE, task = task)
+    }
+
+    public fun containsNoSourceTasksInAnyModule(vararg task: String): BuildResultAssert = apply {
+        containsTasksByStatusInAnyModule(status = TaskOutcome.NO_SOURCE, task = task)
+    }
+
+    public fun containsTasksByStatusInAnyModule(status: TaskOutcome, vararg task: String) {
+        val allTasksByStatus = GradleModule.of(actual).allTasks().filter { it.result == status }.map { it.name }
+        assertThat(allTasksByStatus).contains(*task)
+    }
+
+    // Negative task assertions
+    public fun doesNotContainSuccessTasks(module: String, vararg task: String): BuildResultAssert = apply {
+        doesNotContainTasksNotByStatus(module = module, status = TaskOutcome.SUCCESS, task = task)
+    }
+
+    public fun doesNotContainFailedTasks(module: String, vararg task: String): BuildResultAssert = apply {
+        doesNotContainTasksNotByStatus(module = module, status = TaskOutcome.FAILED, task = task)
+    }
+
+    public fun doesNotContainUpToDateTasks(module: String, vararg task: String): BuildResultAssert = apply {
+        doesNotContainTasksNotByStatus(module = module, status = TaskOutcome.UP_TO_DATE, task = task)
+    }
+
+    public fun doesNotContainSkippedTasks(module: String, vararg task: String): BuildResultAssert = apply {
+        doesNotContainTasksNotByStatus(module = module, status = TaskOutcome.SKIPPED, task = task)
+    }
+
+    public fun doesNotContainFromCacheTasks(module: String, vararg task: String): BuildResultAssert = apply {
+        doesNotContainTasksNotByStatus(module = module, status = TaskOutcome.FROM_CACHE, task = task)
+    }
+
+    public fun doesNotContainNoSourceTasks(module: String, vararg task: String): BuildResultAssert = apply {
+        doesNotContainTasksNotByStatus(module = module, status = TaskOutcome.NO_SOURCE, task = task)
+    }
+
+    public fun doesNotContainTasksNotByStatus(module: String, status: TaskOutcome, vararg task: String) {
+        val tasksByStatus = GradleModule.of(actual).module(module).allTasksByStatus(status).map { it.name }
+        assertThat(tasksByStatus).doesNotContain(*task)
+    }
+
+    // Task existence assertions
+    public fun containsTasks(module: String, vararg taskName: String): BuildResultAssert = apply {
+        val moduleTasks = GradleModule.of(actual).module(module).allTasks().map { it.name }
+        assertThat(moduleTasks).contains(*taskName)
+    }
+
+    public fun doesNotContainTasks(module: String, vararg taskName: String): BuildResultAssert = apply {
+        val moduleTasks = GradleModule.of(actual).module(module).allTasks().map { it.name }
+        assertThat(moduleTasks).doesNotContain(*taskName)
+    }
+
+    public fun containsOnlyTasks(module: String, vararg taskName: String): BuildResultAssert = apply {
+        val moduleTasks = GradleModule.of(actual).module(module).allTasks().map { it.name }
+        assertThat(moduleTasks).containsExactlyInAnyOrder(*taskName)
+    }
+
+    // Module assertions
+    public fun containsModule(vararg moduleName: String): BuildResultAssert = apply {
+        val modules = GradleModule.of(actual).allModules().map { it.name }
+        assertThat(modules).contains(*moduleName)
+    }
+
+    public fun doesNotContainModule(vararg moduleName: String): BuildResultAssert = apply {
+        val modules = GradleModule.of(actual).allModules().map { it.name }
+        assertThat(modules).doesNotContain(*moduleName)
+    }
+
+    // Task count assertions
+    public fun moduleTasksHasSize(module: String, expectedCount: Int): BuildResultAssert = apply {
+        val moduleTasks = GradleModule.of(actual).module(module).allTasks()
+        assertThat(moduleTasks).hasSize(expectedCount)
+    }
+
+    public fun tasksHasSize(expectedCount: Int): BuildResultAssert = apply {
+        assertThat(actual.tasks).hasSize(expectedCount)
+    }
+
+    public fun modulesHasSize(expectedCount: Int): BuildResultAssert = apply {
+        val modules = GradleModule.of(actual).allModules()
+        assertThat(modules).hasSize(expectedCount)
+    }
+
+    public fun moduleTasksByStatusHasSize(module: String, status: TaskOutcome, expectedCount: Int): BuildResultAssert = apply {
+        val tasksByStatus = GradleModule.of(actual).module(module).allTasksByStatus(status)
+        assertThat(tasksByStatus).hasSize(expectedCount)
+    }
+
+    // Empty assertions
+    public fun moduleIsEmpty(module: String): BuildResultAssert = apply {
+        val moduleTasks = GradleModule.of(actual).module(module).allTasks()
+        assertThat(moduleTasks).isEmpty()
+    }
+
+    public fun moduleTasksByStatusIsEmpty(module: String, status: TaskOutcome): BuildResultAssert = apply {
+        val tasksByStatus = GradleModule.of(actual).module(module).allTasksByStatus(status)
+        assertThat(tasksByStatus).isEmpty()
     }
 
 }
@@ -166,4 +294,3 @@ private data class GradleModule(
         }
     }
 }
-
