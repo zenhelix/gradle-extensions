@@ -369,10 +369,10 @@ class GradleTaskOutputParserTest {
         """.trimIndent()
 
         assertThat(parseGradleTasksOutput(output))
-            .hasCategory("android", "build", "build setup", "help", "ide", "install", "publishing", "run", "verification", "other")
-            .hasRule("clean<TaskName>", "build<ConfigurationName>")
-            .hasTasksInCategory("run", "jvmRun")
-            .hasTasksInCategory("install", "installDebugAndroidTest", "uninstallAll", "uninstallDebugAndroidTest")
+            .containsCategory("android", "build", "build setup", "help", "ide", "install", "publishing", "run", "verification", "other")
+            .containsRule("clean<TaskName>", "build<ConfigurationName>")
+            .containsTaskInCategory("run", "jvmRun")
+            .containsTaskInCategory("install", "installDebugAndroidTest", "uninstallAll", "uninstallDebugAndroidTest")
     }
 
 }
