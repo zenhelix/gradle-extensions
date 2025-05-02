@@ -3,6 +3,7 @@ import org.gradle.api.internal.tasks.JvmConstants
 plugins {
     id("io.github.zenhelix.kotlin-jvm-library") apply false
     id("io.github.zenhelix.maven-central-publish")
+    id("io.github.zenhelix.jdk17.convention") apply false
     `java-library`
 }
 
@@ -64,6 +65,7 @@ configure(subprojects.filter { it.childProjects.isEmpty() }) {
 
 configure(subprojects.filter { it.name.contains("gradle-extensions-platform-").not() }) {
     apply(plugin = "io.github.zenhelix.kotlin-jvm-library")
+    apply(plugin = "io.github.zenhelix.jdk17.convention")
 
     publishing {
         publications {

@@ -54,5 +54,6 @@ pluginManagement {
     plugins {
         id("io.github.zenhelix.maven-central-publish") version mavenCentralPublishVersion
         id("io.github.zenhelix.kotlin-jvm-library") version zenhelixGradleVersion
+        id("io.github.zenhelix.jdk17.convention") version zenhelixGradleVersion
     }
 }
