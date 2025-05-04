@@ -1,7 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl.task
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
-import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectCollectionDsl
+import io.github.zenhelix.gradle.test.dsl.gradle.AbstractPolymorphicDomainObjectContainerDsl
 import io.github.zenhelix.gradle.test.dsl.gradle.RepositoryHandlerDsl
 
 /**
@@ -37,11 +37,16 @@ public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent 
 }
 
 /**
+ * Маркерный интерфейс для публикаций
+ */
+public interface Publication
+
+/**
  * DSL for publications
  */
 public class PublicationsDsl(
     parent: GradleDsl
-) : AbstractNamedDomainObjectCollectionDsl<Any, MavenPublicationDsl>(parent, "publications") {
+) : AbstractPolymorphicDomainObjectContainerDsl<Publication, MavenPublicationDsl>(parent, "publications") {
 
     /**
      * Создает конфигуратор для публикации
@@ -52,9 +57,7 @@ public class PublicationsDsl(
      * Создает Maven публикацию
      */
     public fun mavenPublication(name: String, init: MavenPublicationDsl.() -> Unit) {
-        block("create<MavenPublication>(\"$name\")") {
-            createConfigurator(this).apply(init)
-        }
+        create<Publication>("MavenPublication", name, init)
     }
 }
 

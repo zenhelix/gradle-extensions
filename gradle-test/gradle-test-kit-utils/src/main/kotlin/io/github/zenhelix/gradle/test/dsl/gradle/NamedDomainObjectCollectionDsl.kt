@@ -3,6 +3,57 @@ package io.github.zenhelix.gradle.test.dsl.gradle
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
 
 /**
+ * Интерфейс для DSL контейнеров с поддержкой создания типизированных объектов
+ *
+ * @param T базовый тип объектов в контейнере
+ * @param C тип конфигуратора для объектов в контейнере
+ */
+public interface PolymorphicDomainObjectContainerDsl<T, C> : NamedDomainObjectCollectionDsl<T, C> {
+
+    /**
+     * Создает объект указанного типа
+     *
+     * @param type имя типа
+     * @param name имя создаваемого объекта
+     * @param init блок инициализации объекта
+     */
+    public fun <S : T> create(type: String, name: String, init: C.() -> Unit)
+
+    /**
+     * Регистрирует новый тип в контейнере
+     *
+     * @param type имя типа
+     * @param implementationType полное имя класса реализации
+     */
+    public fun registerType(type: String, implementationType: String)
+}
+
+/**
+ * Базовая реализация полиморфного контейнера DSL
+ *
+ * @param T базовый тип объектов в контейнере
+ * @param C тип конфигуратора для объектов
+ */
+public abstract class AbstractPolymorphicDomainObjectContainerDsl<T, C>(
+    parent: GradleDsl,
+    collectionName: String = ""
+) : AbstractNamedDomainObjectCollectionDsl<T, C>(parent, collectionName),
+    PolymorphicDomainObjectContainerDsl<T, C> {
+
+    override fun <S : T> create(type: String, name: String, init: C.() -> Unit) {
+        val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
+        parent.block("${prefix}create<$type>(\"$name\")") {
+            createConfigurator(this).apply(init)
+        }
+    }
+
+    override fun registerType(type: String, implementationType: String) {
+        val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
+        parent.line("${prefix}registerBinding(bind($type::class.java, $implementationType::class.java))")
+    }
+}
+
+/**
  * Базовый интерфейс для DSL, работающих с коллекциями объектов в Gradle
  *
  * @param T тип объектов в коллекции
