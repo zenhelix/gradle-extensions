@@ -1,21 +1,31 @@
 package io.github.zenhelix.gradle.test.dsl
 
-import io.github.zenhelix.gradle.test.dsl.task.android.AndroidLibraryDsl
-import io.github.zenhelix.gradle.test.dsl.task.kotlin.KotlinMultiplatformDsl
+import io.github.zenhelix.gradle.test.dsl.gradle.DependencyHandlerDsl
+import io.github.zenhelix.gradle.test.dsl.gradle.ProjectConfigDsl
+import io.github.zenhelix.gradle.test.dsl.gradle.RepositoryHandlerDsl
+import io.github.zenhelix.gradle.test.dsl.task.JavaDsl
 import io.github.zenhelix.gradle.test.dsl.task.PomDsl
 import io.github.zenhelix.gradle.test.dsl.task.PublishingDsl
 import io.github.zenhelix.gradle.test.dsl.task.SigningDsl
 import io.github.zenhelix.gradle.test.dsl.task.TaskDsl
+import io.github.zenhelix.gradle.test.dsl.task.android.AndroidLibraryDsl
+import io.github.zenhelix.gradle.test.dsl.task.kotlin.KotlinMultiplatformDsl
 
 /**
  * DSL for building build.gradle.kts content
  */
 public class BuildGradleDsl : GradleDslImpl() {
+
     /**
-     * Adds an import statement
+     * Adds multiple import statements
      */
-    public fun import(path: String) {
-        line("import $path")
+    public fun import(vararg paths: String) {
+        paths.forEach { path ->
+            line("import $path")
+        }
+        if (paths.isNotEmpty()) {
+            line("")
+        }
     }
 
     /**
@@ -25,7 +35,15 @@ public class BuildGradleDsl : GradleDslImpl() {
         block("plugins") {
             PluginsDsl(this).apply(init)
         }
-        line("")
+    }
+
+    /**
+     * Configures buildscript block
+     */
+    public fun buildscript(init: BuildscriptDsl.() -> Unit) {
+        block("buildscript") {
+            BuildscriptDsl(this).apply(init)
+        }
     }
 
     /**
@@ -35,7 +53,6 @@ public class BuildGradleDsl : GradleDslImpl() {
         block("allprojects") {
             ProjectConfigDsl(this).apply(init)
         }
-        line("")
     }
 
     /**
@@ -45,7 +62,6 @@ public class BuildGradleDsl : GradleDslImpl() {
         block("subprojects") {
             ProjectConfigDsl(this).apply(init)
         }
-        line("")
     }
 
     /**
@@ -55,15 +71,36 @@ public class BuildGradleDsl : GradleDslImpl() {
         block("configure($filter)") {
             ProjectConfigDsl(this).apply(init)
         }
-        line("")
     }
 
     /**
-     * Adds a variable
+     * Adds a val variable declaration
      */
     public fun variable(name: String, type: String, value: String) {
         line("val $name: $type = $value")
-        line("")
+    }
+
+    /**
+     * Adds a variable with inferred type
+     */
+    public fun variable(name: String, value: String) {
+        line("val $name = $value")
+    }
+
+    /**
+     * Adds a project property
+     */
+    public fun property(name: String, value: String) {
+        line("project.extra[\"$name\"] = $value")
+    }
+
+    /**
+     * Configures dependencies block
+     */
+    public fun dependencies(init: DependencyHandlerDsl.() -> Unit) {
+        block("dependencies") {
+            DependencyHandlerDsl(this).apply(init)
+        }
     }
 
     /**
@@ -73,7 +110,6 @@ public class BuildGradleDsl : GradleDslImpl() {
         block("publishing") {
             PublishingDsl(this).apply(init)
         }
-        line("")
     }
 
     /**
@@ -83,59 +119,118 @@ public class BuildGradleDsl : GradleDslImpl() {
         block("signing") {
             SigningDsl(this).apply(init)
         }
-        line("")
     }
 
     /**
-     * Configures MavenPublication publications
+     * Configures java block
      */
-    public fun withTypeMavenPublication(init: PomDsl.() -> Unit) {
-        block("publishing.publications.withType<MavenPublication>") {
-            PomDsl(this).apply(init)
+    public fun java(init: JavaDsl.() -> Unit) {
+        block("java") {
+            JavaDsl(this).apply(init)
         }
-        line("")
     }
 
     /**
      * Configures kotlin block for multiplatform
      */
-    public fun kotlin(init: KotlinMultiplatformDsl.() -> Unit) {
+    public fun kotlinMultiplatform(init: KotlinMultiplatformDsl.() -> Unit) {
         block("kotlin") {
             KotlinMultiplatformDsl(this).apply(init)
         }
-        line("")
     }
 
     /**
      * Configures android block
      */
-    public fun android(init: AndroidLibraryDsl.() -> Unit) {
+    public fun androidLibrary(init: AndroidLibraryDsl.() -> Unit) {
         block("android") {
             AndroidLibraryDsl(this).apply(init)
         }
-        line("")
     }
 
     /**
      * Registers a task
      */
-    public fun task(name: String, init: TaskDsl.() -> Unit) {
-        block("tasks.register(\"$name\")") {
+    public fun task(name: String, type: String? = null, init: TaskDsl.() -> Unit = {}) {
+        if (type != null) {
+            block("tasks.register<$type>(\"$name\")") {
+                TaskDsl(this).apply(init)
+            }
+        } else {
+            block("tasks.register(\"$name\")") {
+                TaskDsl(this).apply(init)
+            }
+        }
+    }
+
+    /**
+     * Configures an existing task
+     */
+    public fun taskConfig(name: String, init: TaskDsl.() -> Unit) {
+        block("tasks.named(\"$name\")") {
             TaskDsl(this).apply(init)
         }
-        line("")
+    }
+
+    /**
+     * Configures all tasks of a type
+     */
+    public fun tasksWithType(type: String, init: TaskDsl.() -> Unit) {
+        block("tasks.withType<$type>()") {
+            TaskDsl(this).apply(init)
+        }
+    }
+
+    /**
+     * Adds a project afterEvaluate block
+     */
+    public fun afterEvaluate(init: GradleDsl.() -> Unit) {
+        block("afterEvaluate") {
+            init(this)
+        }
     }
 
     /**
      * Configures repositories block
      */
-    public fun repositories(init: RepositoriesDsl.() -> Unit) {
+    public fun repositories(init: RepositoryHandlerDsl.() -> Unit) {
         block("repositories") {
-            RepositoriesDsl(this).init()
+            RepositoryHandlerDsl(this).init()
         }
-        line("")
+    }
+
+    /**
+     * Adds an apply() function call
+     */
+    public fun apply(plugin: String) {
+        line("apply(plugin = \"$plugin\")")
+    }
+
+}
+
+/**
+ * DSL for buildscript block
+ */
+public class BuildscriptDsl(private val parent: GradleDsl) : GradleDsl by parent {
+    /**
+     * Configures repositories for buildscript
+     */
+    public fun repositories(init: RepositoryHandlerDsl.() -> Unit) {
+        block("repositories") {
+            RepositoryHandlerDsl(this).apply(init)
+        }
+    }
+
+    /**
+     * Configures dependencies for buildscript
+     */
+    public fun dependencies(init: DependencyHandlerDsl.() -> Unit) {
+        block("dependencies") {
+            DependencyHandlerDsl(this).apply(init)
+        }
     }
 }
+
 
 /**
  * DSL for plugins in build.gradle.kts
@@ -160,27 +255,6 @@ public class PluginsDsl(private val parent: GradleDsl) : GradleDsl by parent {
     }
 
     /**
-     * Adds kotlin plugin
-     */
-    public fun kotlin(version: String? = null) {
-        id("org.jetbrains.kotlin.jvm", version)
-    }
-
-    /**
-     * Adds kotlin multiplatform plugin
-     */
-    public fun kotlinMultiplatform(version: String? = null) {
-        id("org.jetbrains.kotlin.multiplatform", version)
-    }
-
-    /**
-     * Adds android library plugin
-     */
-    public fun androidLibrary(version: String? = null) {
-        id("com.android.library", version)
-    }
-
-    /**
      * Adds Java library plugin
      */
     public fun javaLibrary() {
@@ -200,54 +274,94 @@ public class PluginsDsl(private val parent: GradleDsl) : GradleDsl by parent {
     public fun versionCatalog() {
         builtin("version-catalog")
     }
-}
 
-/**
- * DSL for project configuration
- */
-public class ProjectConfigDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets the project group
+     * Adds Maven publish plugin
      */
-    public fun group(value: String) {
-        line("group = \"$value\"")
+    public fun mavenPublish() {
+        builtin("maven-publish")
     }
 
     /**
-     * Sets the project version
+     * Adds signing plugin
      */
-    public fun version(value: String) {
-        line("version = \"$value\"")
+    public fun signing() {
+        builtin("signing")
     }
 
     /**
-     * Configures apply block
+     * Adds application plugin
      */
-    public fun apply(init: ApplyDsl.() -> Unit) {
-        block("apply") {
-            ApplyDsl(this).apply(init)
+    public fun application() {
+        builtin("application")
+    }
+
+    /**
+     * Adds Gradle publish plugin
+     */
+    public fun gradlePublish(version: String? = null) {
+        id("com.gradle.plugin-publish", version)
+    }
+
+    /**
+     * Adds kotlin plugin
+     */
+    public fun kotlin(target: String, version: String? = null) {
+        if (version != null) {
+            line("kotlin(\"$target\") version \"$version\"")
+        } else {
+            line("kotlin(\"$target\")")
         }
     }
-}
 
-/**
- * DSL for apply block
- */
-public class ApplyDsl(private val parent: GradleDsl) : GradleDsl by parent {
-    /**
-     * Applies a plugin
-     */
-    public fun plugin(id: String) {
-        line("plugin(\"$id\")")
+    public fun kotlinJvm( version: String? = null) {
+        kotlin("jvm", version)
     }
 
     /**
-     * Applies a built-in plugin
+     * Adds kotlin multiplatform plugin
      */
-    public fun builtin(name: String) {
-        line("plugin(`$name`)")
+    public fun kotlinMultiplatform(version: String? = null) {
+        kotlin("multiplatform", version)
     }
+
+    /**
+     * Adds Kotlin serialization plugin
+     */
+    public fun kotlinSerialization(version: String? = null) {
+        kotlin("plugin.serialization", version)
+    }
+
+    /**
+     * Adds Kotlin parcelize plugin
+     */
+    public fun kotlinParcelize() {
+        kotlin("plugin.parcelize")
+    }
+
+    /**
+     * Adds Kotlin kapt plugin
+     */
+    public fun kotlinKapt(version: String? = null) {
+        kotlin("kapt", version)
+    }
+
+    /**
+     * Adds android application plugin
+     */
+    public fun androidApplication(version: String? = null) {
+        id("com.android.application", version)
+    }
+
+    /**
+     * Adds android library plugin
+     */
+    public fun androidLibrary(version: String? = null) {
+        id("com.android.library", version)
+    }
+
 }
+
 
 /**
  * Creates and configures build.gradle.kts DSL

@@ -187,15 +187,6 @@ public class KotlinMultiplatformDsl(private val parent: GradleDsl) : GradleDsl b
     }
 
     /**
-     * Configures cocoapods integration
-     */
-    public fun cocoapods(init: KotlinCocoapodsDsl.() -> Unit) {
-        block("cocoapods") {
-            KotlinCocoapodsDsl(this).apply(init)
-        }
-    }
-
-    /**
      * Configures source sets
      */
     public fun sourceSets(init: KotlinSourceSetsDsl.() -> Unit) {
@@ -595,113 +586,6 @@ public class KotlinNativeSharedLibDsl(private val parent: GradleDsl) : KotlinNat
  * DSL for Kotlin Native static library configuration
  */
 public class KotlinNativeStaticLibDsl(private val parent: GradleDsl) : KotlinNativeExecutableDsl(parent)
-
-/**
- * DSL for Kotlin CocoaPods integration
- */
-public class KotlinCocoapodsDsl(private val parent: GradleDsl) : GradleDsl by parent {
-    /**
-     * Sets the pod name
-     */
-    public fun name(name: String) {
-        line("name = \"$name\"")
-    }
-
-    /**
-     * Sets the pod version
-     */
-    public fun version(version: String) {
-        line("version = \"$version\"")
-    }
-
-    /**
-     * Sets the pod summary
-     */
-    public fun summary(summary: String) {
-        line("summary = \"$summary\"")
-    }
-
-    /**
-     * Sets the pod homepage
-     */
-    public fun homepage(url: String) {
-        line("homepage = \"$url\"")
-    }
-
-    /**
-     * Sets the pod source repository
-     */
-    public fun source(init: KotlinCocoapodsSourceDsl.() -> Unit) {
-        block("source") {
-            KotlinCocoapodsSourceDsl(this).apply(init)
-        }
-    }
-
-    /**
-     * Configures a pod dependency
-     */
-    public fun pod(name: String, version: String? = null) {
-        if (version != null) {
-            line("pod(\"$name\", \"$version\")")
-        } else {
-            line("pod(\"$name\")")
-        }
-    }
-
-    /**
-     * Configures framework settings
-     */
-    public fun framework(init: KotlinCocoapodsFrameworkDsl.() -> Unit) {
-        block("framework") {
-            KotlinCocoapodsFrameworkDsl(this).apply(init)
-        }
-    }
-}
-
-/**
- * DSL for Kotlin CocoaPods source configuration
- */
-public class KotlinCocoapodsSourceDsl(private val parent: GradleDsl) : GradleDsl by parent {
-    /**
-     * Sets the Git URL
-     */
-    public fun git(url: String) {
-        line("git = \"$url\"")
-    }
-
-    /**
-     * Sets the Git tag
-     */
-    public fun tag(tag: String) {
-        line("tag = \"$tag\"")
-    }
-}
-
-/**
- * DSL for Kotlin CocoaPods framework configuration
- */
-public class KotlinCocoapodsFrameworkDsl(private val parent: GradleDsl) : GradleDsl by parent {
-    /**
-     * Sets the framework base name
-     */
-    public fun baseName(name: String) {
-        line("baseName = \"$name\"")
-    }
-
-    /**
-     * Sets whether the framework is static
-     */
-    public fun isStatic(value: Boolean) {
-        line("isStatic = $value")
-    }
-
-    /**
-     * Sets embedding options
-     */
-    public fun transitiveExport(value: Boolean) {
-        line("transitiveExport = $value")
-    }
-}
 
 /**
  * DSL for Kotlin compilations

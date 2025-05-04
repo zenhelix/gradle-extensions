@@ -21,6 +21,20 @@ public class RepositoryHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
     }
 
     /**
+     * Adds Google repository
+     */
+    public fun google() {
+        line("google()")
+    }
+
+    /**
+     * Adds gradlePluginPortal repository
+     */
+    public fun gradlePluginPortal() {
+        line("gradlePluginPortal()")
+    }
+
+    /**
      * Adds Maven repository with URL
      */
     public fun maven(url: String, init: MavenRepositoryDsl.() -> Unit = {}) {

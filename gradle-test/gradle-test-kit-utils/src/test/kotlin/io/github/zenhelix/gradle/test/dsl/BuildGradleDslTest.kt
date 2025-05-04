@@ -26,12 +26,10 @@ class BuildGradleDslTest {
                 id("io.github.zenhelix.test")
                 `java-library`
             }
-            
             allprojects {
                 group = "test.zenhelix"
                 version = "0.1.0"
             }
-            
             
         """.trimIndent())
     }
@@ -67,7 +65,6 @@ class BuildGradleDslTest {
             plugins {
                 id("io.github.zenhelix.test")
             }
-            
             publishing {
                 repositories {
                     mavenLocal()
@@ -88,7 +85,6 @@ class BuildGradleDslTest {
                 }
             }
             
-            
         """.trimIndent())
     }
 
@@ -100,7 +96,7 @@ class BuildGradleDslTest {
                 id("org.jetbrains.kotlin.multiplatform", "2.1.0")
             }
 
-            kotlin {
+            kotlinMultiplatform {
                 jvm {
                     compilerOptions {
                         jvmTarget(KotlinJvmTarget.JVM_17)
@@ -123,7 +119,6 @@ class BuildGradleDslTest {
             plugins {
                 id("org.jetbrains.kotlin.multiplatform") version "2.1.0"
             }
-            
             kotlin {
                 jvm() {
                     compilerOptions {
@@ -141,7 +136,6 @@ class BuildGradleDslTest {
                 }
             }
             
-            
         """.trimIndent())
     }
 
@@ -153,7 +147,7 @@ class BuildGradleDslTest {
                 id("com.android.library", "8.2.0")
             }
 
-            android {
+            androidLibrary {
                 namespace("com.example.app")
                 compileSdk(34)
                 defaultConfig {
@@ -172,7 +166,6 @@ class BuildGradleDslTest {
             plugins {
                 id("com.android.library") version "8.2.0"
             }
-            
             android {
                 namespace = "com.example.app"
                 compileSdk = 34
@@ -186,7 +179,6 @@ class BuildGradleDslTest {
                     }
                 }
             }
-            
             
         """.trimIndent())
     }
@@ -224,7 +216,6 @@ class BuildGradleDslTest {
                     }
                 }
             }
-            
             
         """.trimIndent())
     }

@@ -1,9 +1,23 @@
 package io.github.zenhelix.gradle.test.dsl
 
+import io.github.zenhelix.gradle.test.dsl.gradle.RepositoryHandlerDsl
+
 /**
  * DSL for building settings.gradle.kts content
  */
 public class SettingsGradleDsl : GradleDslImpl() {
+    /**
+     * Adds multiple import statements
+     */
+    public fun import(vararg paths: String) {
+        paths.forEach { path ->
+            line("import $path")
+        }
+        if (paths.isNotEmpty()) {
+            line("")
+        }
+    }
+
     /**
      * Sets the root project name
      */
@@ -51,9 +65,9 @@ public class DependencyManagementDsl(private val parent: GradleDsl) : GradleDsl 
     /**
      * Configures repositories for dependencies
      */
-    public fun repositories(init: RepositoriesDsl.() -> Unit) {
+    public fun repositories(init: RepositoryHandlerDsl.() -> Unit) {
         block("repositories") {
-            RepositoriesDsl(this).apply(init)
+            RepositoryHandlerDsl(this).apply(init)
         }
     }
 }
@@ -65,9 +79,9 @@ public class PluginManagementDsl(private val parent: GradleDsl) : GradleDsl by p
     /**
      * Configures repositories for plugins
      */
-    public fun repositories(init: RepositoriesDsl.() -> Unit) {
+    public fun repositories(init: RepositoryHandlerDsl.() -> Unit) {
         block("repositories") {
-            RepositoriesDsl(this).apply(init)
+            RepositoryHandlerDsl(this).apply(init)
         }
     }
 
@@ -90,39 +104,6 @@ public class PluginsSettingsDsl(private val parent: GradleDsl) : GradleDsl by pa
      */
     public fun id(pluginId: String, version: String) {
         line("id(\"$pluginId\") version \"$version\"")
-    }
-}
-
-/**
- * DSL for repositories
- */
-public class RepositoriesDsl(private val parent: GradleDsl) : GradleDsl by parent {
-    /**
-     * Adds mavenCentral repository
-     */
-    public fun mavenCentral() {
-        line("mavenCentral()")
-    }
-
-    /**
-     * Adds Google repository
-     */
-    public fun google() {
-        line("google()")
-    }
-
-    /**
-     * Adds mavenLocal repository
-     */
-    public fun mavenLocal() {
-        line("mavenLocal()")
-    }
-
-    /**
-     * Adds gradlePluginPortal repository
-     */
-    public fun gradlePluginPortal() {
-        line("gradlePluginPortal()")
     }
 }
 
