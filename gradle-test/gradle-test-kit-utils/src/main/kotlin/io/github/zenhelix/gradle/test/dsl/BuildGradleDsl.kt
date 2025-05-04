@@ -56,6 +56,17 @@ public class BuildGradleDsl : GradleDslImpl() {
         }
     }
 
+    public fun group(value: String) {
+        line("group = \"$value\"")
+    }
+
+    /**
+     * Sets the project version
+     */
+    public fun version(value: String) {
+        line("version = \"$value\"")
+    }
+
     /**
      * Configures allprojects block
      */
@@ -113,6 +124,8 @@ public class BuildGradleDsl : GradleDslImpl() {
         }
     }
 
+    private val publishingDsl = PublishingDsl(this)
+
     /**
      * Configures publishing block
      */
@@ -121,6 +134,9 @@ public class BuildGradleDsl : GradleDslImpl() {
             PublishingDsl(this).apply(init)
         }
     }
+
+    public val publishing: PublishingDsl
+        get() = publishingDsl
 
     /**
      * Configures signing block

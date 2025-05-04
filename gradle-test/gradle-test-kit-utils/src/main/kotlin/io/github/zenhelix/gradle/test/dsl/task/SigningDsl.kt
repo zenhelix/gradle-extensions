@@ -1,6 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl.task
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.gradle.DslReference
 
 /**
  * DSL for signing
@@ -26,4 +27,9 @@ public class SigningDsl(private val parent: GradleDsl) : GradleDsl by parent {
     public fun setRequired(value: Boolean) {
         line("isRequired = $value")
     }
+
+    public fun sign(publicationsReference: DslReference<*>) {
+        line("sign($publicationsReference)")
+    }
+
 }

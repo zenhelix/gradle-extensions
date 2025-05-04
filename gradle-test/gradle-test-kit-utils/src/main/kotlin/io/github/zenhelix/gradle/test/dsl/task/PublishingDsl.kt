@@ -1,12 +1,23 @@
 package io.github.zenhelix.gradle.test.dsl.task
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.gradle.DslReference
 import io.github.zenhelix.gradle.test.dsl.gradle.RepositoryHandlerDsl
+import io.github.zenhelix.gradle.test.dsl.gradle.TypedCollectionDsl
 
 /**
  * DSL for publishing block
  */
 public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent {
+
+    private val publicationsDsl = PublicationsDsl(this)
+
+    /**
+     * Возвращает ссылку на publications для использования в других DSL
+     */
+    public val publications: PublicationsDsl
+        get() = publicationsDsl
+
     /**
      * Configures repositories for publishing
      */
@@ -30,9 +41,14 @@ public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent 
  * DSL for publications
  */
 public class PublicationsDsl(private val parent: GradleDsl) : GradleDsl by parent {
-    /**
-     * Creates a Maven publication
-     */
+    private val typedCollection = TypedCollectionDsl<Any>(this, "publications")
+
+    public fun asReference(): DslReference<Any> = DslReference("publications")
+
+    public fun withType(typeName: String, init: GradleDsl.() -> Unit) {
+        typedCollection.withType(typeName, init)
+    }
+
     public fun mavenPublication(name: String, init: MavenPublicationDsl.() -> Unit) {
         block("create<MavenPublication>(\"$name\")") {
             MavenPublicationDsl(this).apply(init)
