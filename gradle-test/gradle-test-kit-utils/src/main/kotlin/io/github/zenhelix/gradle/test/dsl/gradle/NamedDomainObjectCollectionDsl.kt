@@ -3,31 +3,36 @@ package io.github.zenhelix.gradle.test.dsl.gradle
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
 
 /**
- * Base interface for DSLs that work with Gradle's NamedDomainObjectCollection pattern
+ * Базовый интерфейс для DSL, работающих с коллекциями объектов в Gradle
  *
- * @param T the type of objects in the collection
- * @param C the type of the configurator/handler for items in the collection
+ * @param T тип объектов в коллекции
+ * @param C тип конфигуратора/обработчика для элементов коллекции
  */
 public interface NamedDomainObjectCollectionDsl<T, C> {
 
     /**
-     * Gets the parent DSL context
+     * Получает родительский DSL контекст
      */
     public val parent: GradleDsl
 
     /**
-     * Gets the name of the collection, defaults to empty
+     * Получает имя коллекции, по умолчанию пустая строка
      */
     public val collectionName: String
         get() = ""
 
     /**
-     * Creates the configurator/handler for items in this collection
+     * Возвращает ссылку на эту коллекцию для использования в других DSL
+     */
+    public fun asReference(): DslReference<T> = DslReference(collectionName.ifEmpty { "this" })
+
+    /**
+     * Создает конфигуратор/обработчик для элементов этой коллекции
      */
     public fun createConfigurator(dsl: GradleDsl): C
 
     /**
-     * Gets an object by name and configures it
+     * Получает объект по имени и конфигурирует его
      */
     public fun getByName(name: String, init: C.() -> Unit) {
         val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
@@ -37,7 +42,7 @@ public interface NamedDomainObjectCollectionDsl<T, C> {
     }
 
     /**
-     * Gets an object by name using the Provider API
+     * Получает объект по имени, используя Provider API
      */
     public fun named(name: String, init: C.() -> Unit) {
         val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
@@ -47,7 +52,7 @@ public interface NamedDomainObjectCollectionDsl<T, C> {
     }
 
     /**
-     * Creates a new named object in the collection
+     * Создает новый именованный объект в коллекции
      */
     public fun create(name: String, init: C.() -> Unit) {
         val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
@@ -57,7 +62,7 @@ public interface NamedDomainObjectCollectionDsl<T, C> {
     }
 
     /**
-     * Configures all objects in the collection
+     * Конфигурирует все объекты в коллекции
      */
     public fun all(init: C.() -> Unit) {
         val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
@@ -67,7 +72,7 @@ public interface NamedDomainObjectCollectionDsl<T, C> {
     }
 
     /**
-     * Configures each object in the collection (more efficient for large collections)
+     * Конфигурирует каждый объект в коллекции (более эффективно для больших коллекций)
      */
     public fun configureEach(init: C.() -> Unit) {
         val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
@@ -77,7 +82,7 @@ public interface NamedDomainObjectCollectionDsl<T, C> {
     }
 
     /**
-     * Gets an object by name using Kotlin's property delegate pattern
+     * Получает объект по имени, используя шаблон делегата свойств Kotlin
      */
     public fun getting(name: String, init: C.() -> Unit) {
         parent.block("val $name by getting") {
@@ -86,7 +91,7 @@ public interface NamedDomainObjectCollectionDsl<T, C> {
     }
 
     /**
-     * Filters objects by type and configures them
+     * Фильтрует объекты по типу и конфигурирует их
      */
     public fun withType(type: String, init: C.() -> Unit) {
         val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
@@ -97,7 +102,7 @@ public interface NamedDomainObjectCollectionDsl<T, C> {
 }
 
 /**
- * Base implementation of the NamedDomainObjectCollectionDsl
+ * Базовая реализация NamedDomainObjectCollectionDsl
  */
 public abstract class AbstractNamedDomainObjectCollectionDsl<T, C>(
     override val parent: GradleDsl,

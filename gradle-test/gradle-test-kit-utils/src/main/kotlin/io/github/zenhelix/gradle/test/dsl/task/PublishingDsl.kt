@@ -1,9 +1,8 @@
 package io.github.zenhelix.gradle.test.dsl.task
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
-import io.github.zenhelix.gradle.test.dsl.gradle.DslReference
+import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectCollectionDsl
 import io.github.zenhelix.gradle.test.dsl.gradle.RepositoryHandlerDsl
-import io.github.zenhelix.gradle.test.dsl.gradle.TypedCollectionDsl
 
 /**
  * DSL for publishing block
@@ -32,7 +31,7 @@ public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent 
      */
     public fun publications(init: PublicationsDsl.() -> Unit) {
         block("publications") {
-            PublicationsDsl(this).apply(init)
+            publicationsDsl.apply(init)
         }
     }
 }
@@ -40,18 +39,21 @@ public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent 
 /**
  * DSL for publications
  */
-public class PublicationsDsl(private val parent: GradleDsl) : GradleDsl by parent {
-    private val typedCollection = TypedCollectionDsl<Any>(this, "publications")
+public class PublicationsDsl(
+    parent: GradleDsl
+) : AbstractNamedDomainObjectCollectionDsl<Any, MavenPublicationDsl>(parent, "publications") {
 
-    public fun asReference(): DslReference<Any> = DslReference("publications")
+    /**
+     * Создает конфигуратор для публикации
+     */
+    override fun createConfigurator(dsl: GradleDsl): MavenPublicationDsl = MavenPublicationDsl(dsl)
 
-    public fun withType(typeName: String, init: GradleDsl.() -> Unit) {
-        typedCollection.withType(typeName, init)
-    }
-
+    /**
+     * Создает Maven публикацию
+     */
     public fun mavenPublication(name: String, init: MavenPublicationDsl.() -> Unit) {
         block("create<MavenPublication>(\"$name\")") {
-            MavenPublicationDsl(this).apply(init)
+            createConfigurator(this).apply(init)
         }
     }
 }
