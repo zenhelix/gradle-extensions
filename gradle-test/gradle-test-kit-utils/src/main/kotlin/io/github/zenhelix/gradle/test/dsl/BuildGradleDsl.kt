@@ -1,7 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl
 
-import io.github.zenhelix.gradle.test.dsl.task.AndroidDsl
-import io.github.zenhelix.gradle.test.dsl.task.KotlinMultiplatformDsl
+import io.github.zenhelix.gradle.test.dsl.task.android.AndroidLibraryDsl
+import io.github.zenhelix.gradle.test.dsl.task.kotlin.KotlinMultiplatformDsl
 import io.github.zenhelix.gradle.test.dsl.task.PomDsl
 import io.github.zenhelix.gradle.test.dsl.task.PublishingDsl
 import io.github.zenhelix.gradle.test.dsl.task.SigningDsl
@@ -109,9 +109,9 @@ public class BuildGradleDsl : GradleDslImpl() {
     /**
      * Configures android block
      */
-    public fun android(init: AndroidDsl.() -> Unit) {
+    public fun android(init: AndroidLibraryDsl.() -> Unit) {
         block("android") {
-            AndroidDsl(this).apply(init)
+            AndroidLibraryDsl(this).apply(init)
         }
         line("")
     }

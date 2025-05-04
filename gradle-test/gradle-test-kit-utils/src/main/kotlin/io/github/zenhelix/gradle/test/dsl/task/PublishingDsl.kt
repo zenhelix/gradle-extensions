@@ -1,6 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl.task
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.gradle.RepositoryHandlerDsl
 
 /**
  * DSL for publishing block
@@ -9,9 +10,9 @@ public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent 
     /**
      * Configures repositories for publishing
      */
-    public fun repositories(init: PublishingRepositoriesDsl.() -> Unit) {
+    public fun repositories(init: RepositoryHandlerDsl.() -> Unit) {
         block("repositories") {
-            PublishingRepositoriesDsl(this).apply(init)
+            RepositoryHandlerDsl(this).apply(init)
         }
     }
 
@@ -22,45 +23,6 @@ public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent 
         block("publications") {
             PublicationsDsl(this).apply(init)
         }
-    }
-}
-
-/**
- * DSL for repositories in publishing
- */
-public class PublishingRepositoriesDsl(private val parent: GradleDsl) : GradleDsl by parent {
-    /**
-     * Adds local Maven repository
-     */
-    public fun mavenLocal() {
-        line("mavenLocal()")
-    }
-
-    /**
-     * Adds central Maven repository
-     */
-    public fun mavenCentral() {
-        line("mavenCentral()")
-    }
-
-}
-
-/**
- * DSL for aggregation
- */
-public class AggregateDsl(private val parent: GradleDsl) : GradleDsl by parent {
-    /**
-     * Enables/disables module aggregation
-     */
-    public fun modules(value: Boolean) {
-        line("modules = $value")
-    }
-
-    /**
-     * Enables/disables module publications aggregation
-     */
-    public fun modulePublications(value: Boolean) {
-        line("modulePublications = $value")
     }
 }
 
@@ -76,17 +38,38 @@ public class PublicationsDsl(private val parent: GradleDsl) : GradleDsl by paren
             MavenPublicationDsl(this).apply(init)
         }
     }
+
 }
 
 /**
  * DSL for Maven publication
  */
 public class MavenPublicationDsl(private val parent: GradleDsl) : GradleDsl by parent {
+
     /**
-     * Sets the publication source
+     * Sets the groupId explicitly
      */
-    public fun from(component: String) {
-        line("from(components[\"$component\"])")
+    public fun groupId(value: String) {
+        line("groupId = \"$value\"")
+    }
+
+    /**
+     * Sets the artifactId explicitly
+     */
+    public fun artifactId(value: String) {
+        line("artifactId = \"$value\"")
+    }
+
+    /**
+     * Sets the version explicitly
+     */
+    public fun version(value: String) {
+        line("version = \"$value\"")
+    }
+
+    public fun fromComponent(vararg component: String) {
+        val components = component.joinToString("\", \"", "\"", "\"")
+        line("from(components[$components])")
     }
 
     /**
@@ -97,7 +80,9 @@ public class MavenPublicationDsl(private val parent: GradleDsl) : GradleDsl by p
             PomDsl(this).apply(init)
         }
     }
+
 }
+
 
 /**
  * DSL for POM
@@ -150,6 +135,35 @@ public class PomDsl(private val parent: GradleDsl) : GradleDsl by parent {
             DevelopersDsl(this).apply(init)
         }
     }
+
+    /**
+     * Configures issue management
+     */
+    public fun issueManagement(init: IssueManagementDsl.() -> Unit) {
+        block("issueManagement") {
+            IssueManagementDsl(this).apply(init)
+        }
+    }
+
+}
+
+/**
+ * DSL for issue management
+ */
+public class IssueManagementDsl(private val parent: GradleDsl) : GradleDsl by parent {
+    /**
+     * Sets the system
+     */
+    public fun system(value: String) {
+        line("system = \"$value\"")
+    }
+
+    /**
+     * Sets the URL
+     */
+    public fun url(value: String) {
+        line("url = \"$value\"")
+    }
 }
 
 /**
@@ -184,6 +198,36 @@ public class LicensesDsl(private val parent: GradleDsl) : GradleDsl by parent {
             url("https://opensource.org/licenses/MIT")
         }
     }
+
+    /**
+     * Adds GPL v3 license
+     */
+    public fun gpl3() {
+        license {
+            name("GNU General Public License v3.0")
+            url("https://www.gnu.org/licenses/gpl-3.0.txt")
+        }
+    }
+
+    /**
+     * Adds LGPL v3 license
+     */
+    public fun lgpl3() {
+        license {
+            name("GNU Lesser General Public License v3.0")
+            url("https://www.gnu.org/licenses/lgpl-3.0.txt")
+        }
+    }
+
+    /**
+     * Adds BSD 3-Clause license
+     */
+    public fun bsd3Clause() {
+        license {
+            name("BSD 3-Clause License")
+            url("https://opensource.org/licenses/BSD-3-Clause")
+        }
+    }
 }
 
 /**
@@ -202,6 +246,20 @@ public class LicenseDsl(private val parent: GradleDsl) : GradleDsl by parent {
      */
     public fun url(value: String) {
         line("url = \"$value\"")
+    }
+
+    /**
+     * Sets the license distribution
+     */
+    public fun distribution(value: String) {
+        line("distribution = \"$value\"")
+    }
+
+    /**
+     * Sets the license comments
+     */
+    public fun comments(value: String) {
+        line("comments = \"$value\"")
     }
 }
 
@@ -228,6 +286,13 @@ public class ScmDsl(private val parent: GradleDsl) : GradleDsl by parent {
      */
     public fun url(value: String) {
         line("url = \"$value\"")
+    }
+
+    /**
+     * Sets the tag
+     */
+    public fun tag(value: String) {
+        line("tag = \"$value\"")
     }
 
     /**
@@ -278,23 +343,42 @@ public class DeveloperDsl(private val parent: GradleDsl) : GradleDsl by parent {
     public fun email(value: String) {
         line("email = \"$value\"")
     }
-}
 
-/**
- * DSL for signing
- */
-public class SigningDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Uses in-memory PGP keys
+     * Sets the developer URL
      */
-    public fun useInMemoryPgpKeys(key: String, password: String) {
-        line("useInMemoryPgpKeys(\"\"\"$key\"\"\", \"$password\")")
+    public fun url(value: String) {
+        line("url = \"$value\"")
     }
 
     /**
-     * Signs publications
+     * Sets the developer organization
      */
-    public fun sign(publications: String = "publishing.publications") {
-        line("sign($publications)")
+    public fun organization(value: String) {
+        line("organization = \"$value\"")
+    }
+
+    /**
+     * Sets the developer organization URL
+     */
+    public fun organizationUrl(value: String) {
+        line("organizationUrl = \"$value\"")
+    }
+
+    /**
+     * Sets the developer roles
+     */
+    public fun roles(vararg roles: String) {
+        if (roles.isNotEmpty()) {
+            val rolesStr = roles.joinToString("\", \"", "\"", "\"")
+            line("roles = setOf($rolesStr)")
+        }
+    }
+
+    /**
+     * Sets the developer timezone
+     */
+    public fun timezone(value: String) {
+        line("timezone = \"$value\"")
     }
 }

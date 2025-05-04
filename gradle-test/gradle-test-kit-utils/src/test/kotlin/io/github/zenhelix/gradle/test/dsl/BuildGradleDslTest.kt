@@ -1,6 +1,6 @@
 package io.github.zenhelix.gradle.test.dsl
 
-import io.github.zenhelix.gradle.test.dsl.task.KotlinJvmTarget
+import io.github.zenhelix.gradle.test.dsl.task.kotlin.KotlinJvmTarget
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -51,7 +51,7 @@ class BuildGradleDslTest {
 
                 publications {
                     mavenPublication("javaLib") {
-                        from("java")
+                        fromComponent("java")
                         pom {
                             description("Test library")
                             licenses {
@@ -127,12 +127,12 @@ class BuildGradleDslTest {
             kotlin {
                 jvm() {
                     compilerOptions {
-                        jvmTarget.set(JvmTarget.JVM_17)
+                        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
                     }
                 }
                 linuxX64()
                 sourceSets {
-                    commonMain {
+                    val commonMain by getting {
                         kotlin.srcDir("src/commonMain/kotlin")
                         dependencies {
                             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
@@ -159,13 +159,10 @@ class BuildGradleDslTest {
                 defaultConfig {
                     minSdk(24)
                     targetSdk(34)
-                    versionCode(1)
-                    versionName("1.0.0")
                 }
                 buildTypes {
                     release {
                         minifyEnabled(true)
-                        proguardFiles("proguard-android-optimize.txt", "proguard-rules.pro")
                     }
                 }
             }
@@ -182,13 +179,10 @@ class BuildGradleDslTest {
                 defaultConfig {
                     minSdk = 24
                     targetSdk = 34
-                    versionCode = 1
-                    versionName = "1.0.0"
                 }
                 buildTypes {
                     release {
-                        minifyEnabled = true
-                        proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), getDefaultProguardFile("proguard-rules.pro"))
+                        isMinifyEnabled = true
                     }
                 }
             }
