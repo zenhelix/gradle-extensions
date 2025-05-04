@@ -62,7 +62,6 @@ public class ProjectConfigDsl(private val parent: GradleDsl) : GradleDsl by pare
     }
 }
 
-
 /**
  * DSL for apply block
  */

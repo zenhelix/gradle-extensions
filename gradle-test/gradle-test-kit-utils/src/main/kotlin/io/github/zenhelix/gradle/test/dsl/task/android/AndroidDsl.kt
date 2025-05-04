@@ -15,7 +15,6 @@ public class VectorDrawablesOptionsDsl(private val parent: GradleDsl) : GradleDs
     }
 }
 
-
 /**
  * DSL for Android sourceSets
  */
@@ -93,7 +92,6 @@ public class AndroidSourceSetDsl(private val parent: GradleDsl) : GradleDsl by p
     }
 }
 
-
 /**
  * DSL for Android compileOptions
  */
@@ -115,11 +113,10 @@ public class AndroidCompileOptionsDsl(private val parent: GradleDsl) : GradleDsl
     /**
      * Enables/disables core library desugaring
      */
-    public fun isCoreLibraryDesugaringEnabled(enabled: Boolean) {
+    public fun coreLibraryDesugaringEnabled(enabled: Boolean) {
         line("isCoreLibraryDesugaringEnabled = $enabled")
     }
 }
-
 
 /**
  * DSL for Android packaging
@@ -133,7 +130,6 @@ public class AndroidPackagingDsl(private val parent: GradleDsl) : GradleDsl by p
             AndroidPackagingResourcesDsl(this).apply(init)
         }
     }
-
 }
 
 /**
@@ -157,9 +153,7 @@ public class AndroidPackagingResourcesDsl(private val parent: GradleDsl) : Gradl
         val patternsStr = patterns.joinToString("\", \"", "\"", "\"")
         line("merges += setOf($patternsStr)")
     }
-
 }
-
 
 /**
  * DSL for Android testOptions
@@ -182,14 +176,14 @@ public class AndroidUnitTestsDsl(private val parent: GradleDsl) : GradleDsl by p
     /**
      * Sets isIncludeAndroidResources property
      */
-    public fun isIncludeAndroidResources(include: Boolean) {
+    public fun includeAndroidResources(include: Boolean) {
         line("isIncludeAndroidResources = $include")
     }
 
     /**
      * Sets isReturnDefaultValues property
      */
-    public fun isReturnDefaultValues(returnDefaults: Boolean) {
+    public fun returnDefaultValues(returnDefaults: Boolean) {
         line("isReturnDefaultValues = $returnDefaults")
     }
 }

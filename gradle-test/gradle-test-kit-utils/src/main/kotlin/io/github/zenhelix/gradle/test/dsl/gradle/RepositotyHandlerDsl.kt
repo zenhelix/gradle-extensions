@@ -67,6 +67,20 @@ public class RepositoryHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
 }
 
 /**
+ * Base repository DSL - simplified hierarchy
+ */
+public open class RepositoryDsl(private val parent: GradleDsl) : GradleDsl by parent {
+    /**
+     * Configures repository credentials
+     */
+    public fun credentials(init: CredentialsDsl.() -> Unit) {
+        block("credentials") {
+            CredentialsDsl(this).apply(init)
+        }
+    }
+}
+
+/**
  * DSL for credentials
  */
 public class CredentialsDsl(private val parent: GradleDsl) : GradleDsl by parent {
@@ -83,28 +97,12 @@ public class CredentialsDsl(private val parent: GradleDsl) : GradleDsl by parent
     public fun password(value: String) {
         line("password = \"$value\"")
     }
-
-}
-
-/**
- * Base class for repository configuration
- */
-public open class BaseRepositoryDsl(private val parent: GradleDsl) : GradleDsl by parent {
-    /**
-     * Configures repository credentials
-     */
-    public fun credentials(init: CredentialsDsl.() -> Unit) {
-        block("credentials") {
-            CredentialsDsl(this).apply(init)
-        }
-    }
-
 }
 
 /**
  * DSL for Maven repository
  */
-public class MavenRepositoryDsl(parent: GradleDsl) : BaseRepositoryDsl(parent) {
+public class MavenRepositoryDsl(parent: GradleDsl) : RepositoryDsl(parent) {
     /**
      * Configures authentication
      */
@@ -122,7 +120,6 @@ public class MavenRepositoryDsl(parent: GradleDsl) : BaseRepositoryDsl(parent) {
             MavenContentDsl(this).apply(init)
         }
     }
-
 }
 
 /**
@@ -142,9 +139,7 @@ public class MavenAuthenticationDsl(private val parent: GradleDsl) : GradleDsl b
     public fun digest(name: String = "digest") {
         line("create(\"$name\", DigestAuthentication::class.java)")
     }
-
 }
-
 
 /**
  * DSL for Maven content
@@ -188,11 +183,10 @@ public class MavenContentDsl(private val parent: GradleDsl) : GradleDsl by paren
     }
 }
 
-
 /**
  * DSL for Ivy repository
  */
-public class IvyRepositoryDsl(parent: GradleDsl) : BaseRepositoryDsl(parent) {
+public class IvyRepositoryDsl(parent: GradleDsl) : RepositoryDsl(parent) {
     /**
      * Sets the pattern layout
      */
@@ -229,7 +223,6 @@ public class IvyPatternLayoutDsl(private val parent: GradleDsl) : GradleDsl by p
     public fun ivy(pattern: String) {
         line("ivy(\"$pattern\")")
     }
-
 }
 
 /**

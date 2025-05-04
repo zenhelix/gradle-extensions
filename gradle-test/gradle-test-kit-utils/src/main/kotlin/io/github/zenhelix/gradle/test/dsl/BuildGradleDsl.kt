@@ -4,17 +4,27 @@ import io.github.zenhelix.gradle.test.dsl.gradle.DependencyHandlerDsl
 import io.github.zenhelix.gradle.test.dsl.gradle.ProjectConfigDsl
 import io.github.zenhelix.gradle.test.dsl.gradle.RepositoryHandlerDsl
 import io.github.zenhelix.gradle.test.dsl.task.JavaDsl
-import io.github.zenhelix.gradle.test.dsl.task.PomDsl
 import io.github.zenhelix.gradle.test.dsl.task.PublishingDsl
 import io.github.zenhelix.gradle.test.dsl.task.SigningDsl
 import io.github.zenhelix.gradle.test.dsl.task.TaskDsl
+import io.github.zenhelix.gradle.test.dsl.task.TasksDsl
 import io.github.zenhelix.gradle.test.dsl.task.android.AndroidLibraryDsl
 import io.github.zenhelix.gradle.test.dsl.task.kotlin.KotlinMultiplatformDsl
 
 /**
- * DSL for building build.gradle.kts content
+ * Improved DSL for building build.gradle.kts content
  */
 public class BuildGradleDsl : GradleDslImpl() {
+
+    // Lazy initialized tasks DSL
+    private val tasksDsl by lazy { TasksDsl(this) }
+
+    /**
+     * Access to the tasks container
+     */
+    public fun tasks(init: TasksDsl.() -> Unit) {
+        tasksDsl.apply(init)
+    }
 
     /**
      * Adds multiple import statements
@@ -149,36 +159,17 @@ public class BuildGradleDsl : GradleDslImpl() {
     }
 
     /**
-     * Registers a task
+     * Registers a task - convenience method that delegates to tasks.register
      */
-    public fun task(name: String, type: String? = null, init: TaskDsl.() -> Unit = {}) {
-        if (type != null) {
-            block("tasks.register<$type>(\"$name\")") {
-                TaskDsl(this).apply(init)
-            }
-        } else {
-            block("tasks.register(\"$name\")") {
-                TaskDsl(this).apply(init)
-            }
-        }
+    public fun task(name: String, init: TaskDsl.() -> Unit = {}) {
+        tasksDsl.register(name, init)
     }
 
     /**
-     * Configures an existing task
+     * Registers a typed task - convenience method that delegates to tasks.register
      */
-    public fun taskConfig(name: String, init: TaskDsl.() -> Unit) {
-        block("tasks.named(\"$name\")") {
-            TaskDsl(this).apply(init)
-        }
-    }
-
-    /**
-     * Configures all tasks of a type
-     */
-    public fun tasksWithType(type: String, init: TaskDsl.() -> Unit) {
-        block("tasks.withType<$type>()") {
-            TaskDsl(this).apply(init)
-        }
+    public fun task(name: String, type: String, init: TaskDsl.() -> Unit = {}) {
+        tasksDsl.register(name, type, init)
     }
 
     /**
@@ -195,7 +186,7 @@ public class BuildGradleDsl : GradleDslImpl() {
      */
     public fun repositories(init: RepositoryHandlerDsl.() -> Unit) {
         block("repositories") {
-            RepositoryHandlerDsl(this).init()
+            RepositoryHandlerDsl(this).apply(init)
         }
     }
 
@@ -205,7 +196,6 @@ public class BuildGradleDsl : GradleDslImpl() {
     public fun apply(plugin: String) {
         line("apply(plugin = \"$plugin\")")
     }
-
 }
 
 /**
@@ -230,7 +220,6 @@ public class BuildscriptDsl(private val parent: GradleDsl) : GradleDsl by parent
         }
     }
 }
-
 
 /**
  * DSL for plugins in build.gradle.kts
@@ -314,7 +303,7 @@ public class PluginsDsl(private val parent: GradleDsl) : GradleDsl by parent {
         }
     }
 
-    public fun kotlinJvm( version: String? = null) {
+    public fun kotlinJvm(version: String? = null) {
         kotlin("jvm", version)
     }
 
@@ -359,9 +348,7 @@ public class PluginsDsl(private val parent: GradleDsl) : GradleDsl by parent {
     public fun androidLibrary(version: String? = null) {
         id("com.android.library", version)
     }
-
 }
-
 
 /**
  * Creates and configures build.gradle.kts DSL

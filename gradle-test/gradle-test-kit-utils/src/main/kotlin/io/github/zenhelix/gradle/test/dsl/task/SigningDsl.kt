@@ -26,5 +26,4 @@ public class SigningDsl(private val parent: GradleDsl) : GradleDsl by parent {
     public fun setRequired(value: Boolean) {
         line("isRequired = $value")
     }
-
 }

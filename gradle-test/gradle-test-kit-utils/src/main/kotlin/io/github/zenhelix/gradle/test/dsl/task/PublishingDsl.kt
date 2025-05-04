@@ -38,14 +38,12 @@ public class PublicationsDsl(private val parent: GradleDsl) : GradleDsl by paren
             MavenPublicationDsl(this).apply(init)
         }
     }
-
 }
 
 /**
  * DSL for Maven publication
  */
 public class MavenPublicationDsl(private val parent: GradleDsl) : GradleDsl by parent {
-
     /**
      * Sets the groupId explicitly
      */
@@ -80,9 +78,7 @@ public class MavenPublicationDsl(private val parent: GradleDsl) : GradleDsl by p
             PomDsl(this).apply(init)
         }
     }
-
 }
-
 
 /**
  * DSL for POM
@@ -144,7 +140,6 @@ public class PomDsl(private val parent: GradleDsl) : GradleDsl by parent {
             IssueManagementDsl(this).apply(init)
         }
     }
-
 }
 
 /**

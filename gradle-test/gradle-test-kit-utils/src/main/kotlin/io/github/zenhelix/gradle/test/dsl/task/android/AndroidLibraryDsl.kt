@@ -1,6 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl.task.android
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectCollectionDsl
 
 /**
  * DSL for Android configuration
@@ -101,8 +102,8 @@ public class AndroidLibraryDsl(private val parent: GradleDsl) : GradleDsl by par
      * Configures flavorDimensions
      */
     public fun flavorDimensions(vararg dimensions: String) {
-            val dimensionsStr = dimensions.joinToString("\", \"", "\"", "\"")
-            line("flavorDimensions += listOf($dimensionsStr)")
+        val dimensionsStr = dimensions.joinToString("\", \"", "\"", "\"")
+        line("flavorDimensions += listOf($dimensionsStr)")
     }
 
     /**
@@ -180,7 +181,6 @@ public class AndroidLibraryBuildFeaturesDsl(private val parent: GradleDsl) : Gra
  * DSL for Android defaultConfig
  */
 public class AndroidLibraryDefaultConfigDsl(private val parent: GradleDsl) : GradleDsl by parent {
-
     /**
      * Sets the minimum SDK version
      */
@@ -234,19 +234,21 @@ public class AndroidLibraryDefaultConfigDsl(private val parent: GradleDsl) : Gra
     }
 }
 
+/**
+ * Marker interface for Android product flavor
+ */
+public interface AndroidProductFlavor
 
 /**
  * DSL for Android productFlavors
  */
-public class AndroidLibraryProductFlavorsDsl(private val parent: GradleDsl) : GradleDsl by parent {
+public class AndroidLibraryProductFlavorsDsl(parent: GradleDsl) :
+    AbstractNamedDomainObjectCollectionDsl<AndroidProductFlavor, AndroidLibraryProductFlavorDsl>(parent) {
     /**
-     * Creates a product flavor with given name
+     * Creates the configurator for a product flavor
      */
-    public fun create(name: String, init: AndroidLibraryProductFlavorDsl.() -> Unit) {
-        block("create(\"$name\")") {
-            AndroidLibraryProductFlavorDsl(this).apply(init)
-        }
-    }
+    override fun createConfigurator(dsl: GradleDsl): AndroidLibraryProductFlavorDsl = AndroidLibraryProductFlavorDsl(dsl)
+
 }
 
 /**
@@ -320,6 +322,13 @@ public class AndroidLibraryBuildTypeDsl(private val parent: GradleDsl) : GradleD
 
     /**
      * Sets debuggable property
+     */
+    public fun debuggable(value: Boolean) {
+        line("isDebuggable = $value")
+    }
+
+    /**
+     * Sets jniDebuggable property
      */
     public fun jniDebuggable(value: Boolean) {
         line("isJniDebuggable = $value")

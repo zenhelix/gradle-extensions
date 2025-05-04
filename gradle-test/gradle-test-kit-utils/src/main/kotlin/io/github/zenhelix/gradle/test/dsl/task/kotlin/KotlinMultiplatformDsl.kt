@@ -1,6 +1,26 @@
 package io.github.zenhelix.gradle.test.dsl.task.kotlin
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectCollectionDsl
+
+/**
+ * Enum defining Kotlin Native platforms
+ */
+public enum class KotlinNativePlatform(public val id: String) {
+    LINUX_X64("linuxX64"),
+    LINUX_ARM64("linuxArm64"),
+    IOS_ARM64("iosArm64"),
+    IOS_X64("iosX64"),
+    IOS_SIMULATOR_ARM64("iosSimulatorArm64"),
+    WATCHOS_ARM64("watchosArm64"),
+    WATCHOS_X64("watchosX64"),
+    WATCHOS_SIMULATOR_ARM64("watchosSimulatorArm64"),
+    TVOS_ARM64("tvosArm64"),
+    TVOS_X64("tvosX64"),
+    TVOS_SIMULATOR_ARM64("tvosSimulatorArm64"),
+    MACOS_X64("macosX64"),
+    MACOS_ARM64("macosArm64");
+}
 
 /**
  * DSL for Kotlin Multiplatform
@@ -14,7 +34,7 @@ public class KotlinMultiplatformDsl(private val parent: GradleDsl) : GradleDsl b
     }
 
     /**
-     * Sets explicit API mode
+     * Sets explicit API mode with warning
      */
     public fun explicitApiWarning() {
         line("explicitApiWarning()")
@@ -30,22 +50,14 @@ public class KotlinMultiplatformDsl(private val parent: GradleDsl) : GradleDsl b
     /**
      * Adds JVM target
      */
-    public fun jvm(name: String? = null, init: (KotlinJvmTargetDsl.() -> Unit)? = null) {
+    public fun jvm(name: String? = null, init: KotlinJvmTargetDsl.() -> Unit = {}) {
         if (name != null) {
-            if (init != null) {
-                block("jvm(\"$name\")") {
-                    KotlinJvmTargetDsl(this).apply(init)
-                }
-            } else {
-                line("jvm(\"$name\")")
+            block("jvm(\"$name\")") {
+                KotlinJvmTargetDsl(this).apply(init)
             }
         } else {
-            if (init != null) {
-                block("jvm()") {
-                    KotlinJvmTargetDsl(this).apply(init)
-                }
-            } else {
-                line("jvm()")
+            block("jvm()") {
+                KotlinJvmTargetDsl(this).apply(init)
             }
         }
     }
@@ -65,95 +77,40 @@ public class KotlinMultiplatformDsl(private val parent: GradleDsl) : GradleDsl b
         }
     }
 
+
     /**
-     * Adds Linux x64 target
+     * Adds Linux x64 target (convenience method)
      */
     public fun linuxX64(name: String? = null, init: (KotlinNativeTargetDsl.() -> Unit)? = null) {
-        nativeTarget("linuxX64", name, init)
+        native(KotlinNativePlatform.LINUX_X64, name, init)
     }
 
     /**
-     * Adds Linux ARM 64 target
+     * Adds Linux ARM 64 target (convenience method)
      */
     public fun linuxArm64(name: String? = null, init: (KotlinNativeTargetDsl.() -> Unit)? = null) {
-        nativeTarget("linuxArm64", name, init)
+        native(KotlinNativePlatform.LINUX_ARM64, name, init)
     }
 
     /**
-     * Adds iOS arm64 target
+     * Adds iOS arm64 target (convenience method)
      */
     public fun iosArm64(name: String? = null, init: (KotlinNativeTargetDsl.() -> Unit)? = null) {
-        nativeTarget("iosArm64", name, init)
+        native(KotlinNativePlatform.IOS_ARM64, name, init)
     }
 
     /**
-     * Adds iOS simulator arm64 target
+     * Adds iOS simulator arm64 target (convenience method)
      */
     public fun iosSimulatorArm64(name: String? = null, init: (KotlinNativeTargetDsl.() -> Unit)? = null) {
-        nativeTarget("iosSimulatorArm64", name, init)
+        native(KotlinNativePlatform.IOS_SIMULATOR_ARM64, name, init)
     }
 
     /**
-     * Adds iOS x64 target
+     * Adds iOS x64 target (convenience method)
      */
     public fun iosX64(name: String? = null, init: (KotlinNativeTargetDsl.() -> Unit)? = null) {
-        nativeTarget("iosX64", name, init)
-    }
-
-    /**
-     * Adds watchOS arm64 target
-     */
-    public fun watchosArm64(name: String? = null, init: (KotlinNativeTargetDsl.() -> Unit)? = null) {
-        nativeTarget("watchosArm64", name, init)
-    }
-
-    /**
-     * Adds watchOS x64 simulator target
-     */
-    public fun watchosX64(name: String? = null, init: (KotlinNativeTargetDsl.() -> Unit)? = null) {
-        nativeTarget("watchosX64", name, init)
-    }
-
-    /**
-     * Adds watchOS simulator arm64 target
-     */
-    public fun watchosSimulatorArm64(name: String? = null, init: (KotlinNativeTargetDsl.() -> Unit)? = null) {
-        nativeTarget("watchosSimulatorArm64", name, init)
-    }
-
-    /**
-     * Adds tvOS arm64 target
-     */
-    public fun tvosArm64(name: String? = null, init: (KotlinNativeTargetDsl.() -> Unit)? = null) {
-        nativeTarget("tvosArm64", name, init)
-    }
-
-    /**
-     * Adds tvOS x64 simulator target
-     */
-    public fun tvosX64(name: String? = null, init: (KotlinNativeTargetDsl.() -> Unit)? = null) {
-        nativeTarget("tvosX64", name, init)
-    }
-
-    /**
-     * Adds tvOS simulator arm64 target
-     */
-    public fun tvosSimulatorArm64(name: String? = null, init: (KotlinNativeTargetDsl.() -> Unit)? = null) {
-        nativeTarget("tvosSimulatorArm64", name, init)
-    }
-
-    /**
-     * Adds macOS x64 target
-     */
-    public fun macosX64(name: String? = null, init: (KotlinNativeTargetDsl.() -> Unit)? = null) {
-        nativeTarget("macosX64", name, init)
-    }
-
-    /**
-     * Adds macOS arm64 target
-     */
-    public fun macosArm64(name: String? = null, init: (KotlinNativeTargetDsl.() -> Unit)? = null) {
-        nativeTarget("macosArm64", name, init)
+        native(KotlinNativePlatform.IOS_X64, name, init)
     }
 
     /**
@@ -194,28 +151,31 @@ public class KotlinMultiplatformDsl(private val parent: GradleDsl) : GradleDsl b
             KotlinSourceSetsDsl(this).apply(init)
         }
     }
+
+
     /**
-     * Adds a native target with optional configuration
+     * Adds a native target with the specified platform
      */
-    private fun nativeTarget(targetName: String, name: String?, init: (KotlinNativeTargetDsl.() -> Unit)?) {
+    public fun native(platform: KotlinNativePlatform, name: String? = null, init: (KotlinNativeTargetDsl.() -> Unit)? = null) {
         if (name != null) {
-            if (init != null) {
-                block("$targetName(\"$name\")") {
+            if (init == null) {
+                line("${platform.id}(\"$name\")")
+            } else {
+                block("${platform.id}(\"$name\")") {
                     KotlinNativeTargetDsl(this).apply(init)
                 }
-            } else {
-                line("$targetName(\"$name\")")
             }
         } else {
-            if (init != null) {
-                block("$targetName()") {
+            if (init == null) {
+                line("${platform.id}()")
+            } else {
+                block("${platform.id}()") {
                     KotlinNativeTargetDsl(this).apply(init)
                 }
-            } else {
-                line("$targetName()")
             }
         }
     }
+
 }
 
 /**
@@ -270,7 +230,7 @@ public open class KotlinTargetDsl(private val parent: GradleDsl) : GradleDsl by 
  * DSL for Kotlin JVM targets
  */
 public class KotlinJvmTargetDsl(parent: GradleDsl) : KotlinTargetDsl(parent) {
-
+    // JVM-specific configurations go here
 }
 
 /**
@@ -315,7 +275,6 @@ public class KotlinWasmJsTargetDsl(parent: GradleDsl) : KotlinTargetDsl(parent) 
             KotlinJsNodeDsl(this).apply(init)
         }
     }
-
 }
 
 /**
@@ -339,7 +298,6 @@ public class KotlinJsTargetDsl(parent: GradleDsl) : KotlinTargetDsl(parent) {
             KotlinJsNodeDsl(this).apply(init)
         }
     }
-
 }
 
 /**
@@ -392,7 +350,7 @@ public class KotlinJsNodeDsl(private val parent: GradleDsl) : GradleDsl by paren
  * DSL for Kotlin JS Node test task configuration
  */
 public class KotlinJsNodeTestTaskDsl(private val parent: GradleDsl) : GradleDsl by parent {
-
+    // Node test task configuration
 }
 
 /**
@@ -440,12 +398,11 @@ public class KotlinJsWebpackDsl(private val parent: GradleDsl) : GradleDsl by pa
     }
 }
 
-
 /**
  * DSL for Kotlin JS distribution configuration
  */
 public class KotlinJsDistributionDsl(private val parent: GradleDsl) : GradleDsl by parent {
-
+    // Distribution-specific configurations
 }
 
 /**
@@ -539,16 +496,9 @@ public class KotlinNativeBinariesDsl(private val parent: GradleDsl) : GradleDsl 
 }
 
 /**
- * DSL for Kotlin Native executable configuration
+ * Base class for native binary configurations
  */
-public open class KotlinNativeExecutableDsl(private val parent: GradleDsl) : GradleDsl by parent {
-
-}
-
-/**
- * Base class for Kotlin Native binary type configurations
- */
-public open class KotlinNativeBaseConfigDsl(private val parent: GradleDsl) : GradleDsl by parent {
+public open class KotlinNativeBinaryDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
      * Sets compilation options
      */
@@ -573,19 +523,24 @@ public open class KotlinNativeBaseConfigDsl(private val parent: GradleDsl) : Gra
 }
 
 /**
+ * DSL for Kotlin Native executable configuration
+ */
+public class KotlinNativeExecutableDsl(parent: GradleDsl) : KotlinNativeBinaryDsl(parent)
+
+/**
  * DSL for Kotlin Native framework configuration
  */
-public class KotlinNativeFrameworkDsl(private val parent: GradleDsl) : KotlinNativeExecutableDsl(parent)
+public class KotlinNativeFrameworkDsl(parent: GradleDsl) : KotlinNativeBinaryDsl(parent)
 
 /**
  * DSL for Kotlin Native shared library configuration
  */
-public class KotlinNativeSharedLibDsl(private val parent: GradleDsl) : KotlinNativeExecutableDsl(parent)
+public class KotlinNativeSharedLibDsl(parent: GradleDsl) : KotlinNativeBinaryDsl(parent)
 
 /**
  * DSL for Kotlin Native static library configuration
  */
-public class KotlinNativeStaticLibDsl(private val parent: GradleDsl) : KotlinNativeExecutableDsl(parent)
+public class KotlinNativeStaticLibDsl(parent: GradleDsl) : KotlinNativeBinaryDsl(parent)
 
 /**
  * DSL for Kotlin compilations
@@ -743,82 +698,64 @@ public class KotlinCompilerOptionsDsl(private val parent: GradleDsl) : GradleDsl
 /**
  * DSL for Kotlin source sets
  */
-public class KotlinSourceSetsDsl(private val parent: GradleDsl) : GradleDsl by parent {
+public class KotlinSourceSetsDsl(parent: GradleDsl) :
+    AbstractNamedDomainObjectCollectionDsl<KotlinSourceSet, KotlinSourceSetDsl>(parent, "sourceSets") {
+
     /**
-     * Configures common source set
+     * Creates the configurator for a source set
+     */
+    override fun createConfigurator(dsl: GradleDsl): KotlinSourceSetDsl = KotlinSourceSetDsl(dsl)
+
+    /**
+     * Configures common main source set using the 'getting' pattern
      */
     public fun commonMain(init: KotlinSourceSetDsl.() -> Unit) {
-        block("val commonMain by getting") {
-            KotlinSourceSetDsl(this).apply(init)
-        }
+        getting("commonMain", init)
     }
 
     /**
-     * Configures JVM source set
+     * Configures JVM main source set
      */
     public fun jvmMain(init: KotlinSourceSetDsl.() -> Unit) {
-        block("getByName(\"jvmMain\")") {
-            KotlinSourceSetDsl(this).apply(init)
-        }
+        getByName("jvmMain", init)
     }
 
     /**
-     * Configures Android source set
+     * Configures Android main source set
      */
     public fun androidMain(init: KotlinSourceSetDsl.() -> Unit) {
-        block("getByName(\"androidMain\")") {
-            KotlinSourceSetDsl(this).apply(init)
-        }
+        getByName("androidMain", init)
     }
 
     /**
      * Configures common test source set
      */
     public fun commonTest(init: KotlinSourceSetDsl.() -> Unit) {
-        block("getByName(\"commonTest\")") {
-            KotlinSourceSetDsl(this).apply(init)
-        }
+        getByName("commonTest", init)
     }
 
     /**
      * Configures JVM test source set
      */
     public fun jvmTest(init: KotlinSourceSetDsl.() -> Unit) {
-        block("getByName(\"jvmTest\")") {
-            KotlinSourceSetDsl(this).apply(init)
-        }
+        getByName("jvmTest", init)
     }
 
     /**
      * Configures Android test source set
      */
     public fun androidTest(init: KotlinSourceSetDsl.() -> Unit) {
-        block("getByName(\"androidTest\")") {
-            KotlinSourceSetDsl(this).apply(init)
-        }
-    }
-
-    /**
-     * Configures a named source set
-     */
-    public fun getByName(name: String, init: KotlinSourceSetDsl.() -> Unit) {
-        block("getByName(\"$name\")") {
-            KotlinSourceSetDsl(this).apply(init)
-        }
-    }
-
-    /**
-     * Creates a source set
-     */
-    public fun create(name: String, init: KotlinSourceSetDsl.() -> Unit) {
-        block("create(\"$name\")") {
-            KotlinSourceSetDsl(this).apply(init)
-        }
+        getByName("androidTest", init)
     }
 }
 
 /**
- * DSL for Kotlin source set
+ * Marker interface for Kotlin source set type
+ */
+public interface KotlinSourceSet
+
+/**
+ * DSL for Kotlin source set - remains unchanged
  */
 public class KotlinSourceSetDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
@@ -860,12 +797,6 @@ public class KotlinSourceSetDsl(private val parent: GradleDsl) : GradleDsl by pa
         line("resources.setSrcDirs(listOf($dirsStr))")
     }
 
-    /**
-     * Defines source set dependencies
-     */
-    public fun dependsOn(sourceSet: String) {
-        line("dependsOn(sourceSets.getByName(\"$sourceSet\"))")
-    }
 }
 
 /**
