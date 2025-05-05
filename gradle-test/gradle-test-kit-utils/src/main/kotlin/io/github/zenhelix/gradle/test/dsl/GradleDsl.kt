@@ -5,27 +5,27 @@ package io.github.zenhelix.gradle.test.dsl
  */
 public interface GradleDsl {
     /**
-     * Добавляет строку в содержимое
+     * Adds a line to the content
      */
     public fun line(text: String)
 
     /**
-     * Добавляет блок с именем и опциональными параметрами
+     * Adds a block with name and optional parameters
      */
     public fun block(name: String, params: String = "", init: GradleDsl.() -> Unit)
 
     /**
-     * Добавляет текст как есть
+     * Adds text as is
      */
     public fun raw(text: String)
 
     /**
-     * Возвращает построенное содержимое файла
+     * Returns the built file content
      */
     public fun build(): String
 
     /**
-     * Возвращает текущий контекстный путь DSL
+     * Returns the current DSL context path
      */
     public val dslPath: DslPath
 
@@ -73,7 +73,7 @@ public open class GradleDslImpl(
     override fun build(): String = content.toString()
 
     /**
-     * Создает дочерний DSL с обновленным путем
+     * Creates a child DSL with updated path
      */
     protected open fun createChildDsl(blockName: String): GradleDslImpl {
         return GradleDslImpl(dslPath.append(blockName))
@@ -81,37 +81,37 @@ public open class GradleDslImpl(
 }
 
 /**
- * Представляет путь в иерархии DSL
+ * Represents a path in the DSL hierarchy
  */
 public class DslPath(
     internal val segments: List<String> = emptyList()
 ) {
     /**
-     * Добавляет сегмент к текущему пути
+     * Adds a segment to the current path
      */
     public fun append(segment: String): DslPath =
         DslPath(segments + segment)
 
     /**
-     * Проверяет, находится ли данный путь внутри указанного пути
+     * Checks if this path is inside the specified path
      */
     public fun isInside(other: DslPath): Boolean =
         segments.size >= other.segments.size &&
                 segments.take(other.segments.size) == other.segments
 
     /**
-     * Проверяет, находимся ли в контексте указанного сегмента
+     * Checks if we are in the context of the specified segment
      */
     public fun isInside(segment: String): Boolean =
         segments.contains(segment)
 
     /**
-     * Формирует полный путь в виде строки
+     * Forms a full path as a string
      */
     public fun toFullPath(): String = segments.joinToString(".")
 
     /**
-     * Создает относительный путь от текущего до указанного
+     * Creates a relative path from current to the specified
      */
     public fun pathTo(target: DslPath): String {
         val commonPrefixSize = segments.zip(target.segments)

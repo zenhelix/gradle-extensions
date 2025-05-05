@@ -14,13 +14,13 @@ public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent 
     private val publicationsDsl = PublicationsDsl(this)
 
     /**
-     * Доступ к публикациям
+     * Access to publications
      */
     public val publications: PublicationsDsl
         get() = publicationsDsl
 
     /**
-     * Конфигурирует репозитории для публикаций
+     * Configures repositories for publications
      */
     public fun repositories(init: RepositoryHandlerDsl.() -> Unit) {
         block("repositories") {
@@ -29,7 +29,7 @@ public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent 
     }
 
     /**
-     * Конфигурирует публикации
+     * Configures publications
      */
     public fun publications(init: PublicationsDsl.() -> Unit) {
         block("publications") {
@@ -39,7 +39,7 @@ public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent 
 }
 
 /**
- * Маркерный интерфейс для публикаций
+ * Marker interface for publications
  */
 public interface Publication
 
@@ -52,12 +52,12 @@ public class PublicationsDsl(
     override val dslPath: DslPath = parent.dslPath.append("publications")
 
     /**
-     * Создает конфигуратор для публикации
+     * Creates configurator for publication
      */
     override fun createConfigurator(dsl: GradleDsl): MavenPublicationDsl = MavenPublicationDsl(dsl)
 
     /**
-     * Создает Maven публикацию
+     * Creates Maven publication
      */
     public fun mavenPublication(name: String, init: MavenPublicationDsl.() -> Unit) {
         create<Publication>("MavenPublication", name, init)
