@@ -1,6 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl.task
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
 import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectCollectionDsl
 import org.gradle.api.Task
 
@@ -32,11 +33,10 @@ public class TasksDsl(parent: GradleDsl) :
             createConfigurator(this).apply(init)
         }
     }
-
 }
 
 /**
- * DSL for Gradle tasks - core implementation remains the same
+ * DSL for Gradle tasks
  */
 public class TaskDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
@@ -70,32 +70,24 @@ public class TaskDsl(private val parent: GradleDsl) : GradleDsl by parent {
     }
 
     /**
-     * Sets task group
+     * Group property
      */
-    public fun group(name: String) {
-        line("group = \"$name\"")
-    }
+    public var group: String by PropertyDelegate(parent)
 
     /**
-     * Sets task description
+     * Description property
      */
-    public fun description(text: String) {
-        line("description = \"$text\"")
-    }
+    public var description: String by PropertyDelegate(parent)
 
     /**
-     * Sets the task type
+     * Type property
      */
-    public fun type(typeName: String) {
-        line("type = $typeName::class.java")
-    }
+    public var type: String by PropertyDelegate(parent) { "$it::class.java" }
 
     /**
-     * Sets the task enabled flag
+     * Enabled property
      */
-    public fun enabled(isEnabled: Boolean) {
-        line("enabled = $isEnabled")
-    }
+    public var enabled: Boolean by PropertyDelegate(parent)
 }
 
 /**

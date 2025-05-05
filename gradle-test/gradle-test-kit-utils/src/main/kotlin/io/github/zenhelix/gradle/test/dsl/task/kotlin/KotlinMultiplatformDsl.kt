@@ -1,6 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl.task.kotlin
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
 import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectCollectionDsl
 
 /**
@@ -43,9 +44,7 @@ public class KotlinMultiplatformDsl(private val parent: GradleDsl) : GradleDsl b
     /**
      * Sets explicit API mode with a specific mode
      */
-    public fun explicitApi(mode: ExplicitApiMode) {
-        line("explicitApi = org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode.${mode.value}")
-    }
+    public var explicitApi: ExplicitApiMode by PropertyDelegate(parent) { "org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode.${it.value}" }
 
     /**
      * Adds JVM target
@@ -358,7 +357,7 @@ public class KotlinJsNodeTestTaskDsl(private val parent: GradleDsl) : GradleDsl 
  */
 public class KotlinJsCommonWebpackDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets the module kind
+     * Configures CSS support
      */
     public fun cssSupport(init: KotlinJsCssSupportDsl.() -> Unit) {
         block("cssSupport") {
@@ -379,11 +378,9 @@ public class KotlinJsCommonWebpackDsl(private val parent: GradleDsl) : GradleDsl
  */
 public class KotlinJsCssSupportDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Enables CSS support
+     * CSS support enabled property
      */
-    public fun enabled(value: Boolean) {
-        line("enabled = $value")
-    }
+    public var enabled: Boolean by PropertyDelegate(parent)
 }
 
 /**
@@ -391,11 +388,9 @@ public class KotlinJsCssSupportDsl(private val parent: GradleDsl) : GradleDsl by
  */
 public class KotlinJsWebpackDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets the output filename
+     * Main output filename property
      */
-    public fun mainOutputFileName(name: String) {
-        line("mainOutputFileName = \"$name\"")
-    }
+    public var mainOutputFileName: String by PropertyDelegate(parent)
 }
 
 /**
@@ -410,11 +405,9 @@ public class KotlinJsDistributionDsl(private val parent: GradleDsl) : GradleDsl 
  */
 public class KotlinJsExecutableDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets the module kind
+     * Module kind property
      */
-    public fun moduleKind(kind: KotlinJsModuleKind) {
-        line("moduleKind = ModuleKind.${kind.name}")
-    }
+    public var moduleKind: KotlinJsModuleKind by PropertyDelegate(parent) { "ModuleKind.${it.name}" }
 }
 
 /**
@@ -422,11 +415,9 @@ public class KotlinJsExecutableDsl(private val parent: GradleDsl) : GradleDsl by
  */
 public class KotlinJsLibraryDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets the module kind
+     * Module kind property
      */
-    public fun moduleKind(kind: KotlinJsModuleKind) {
-        line("moduleKind = ModuleKind.${kind.name}")
-    }
+    public var moduleKind: KotlinJsModuleKind by PropertyDelegate(parent) { "ModuleKind.${it.name}" }
 }
 
 /**
@@ -637,12 +628,9 @@ public class KotlinAttributesDsl(private val parent: GradleDsl) : GradleDsl by p
  */
 public class KotlinCompilerOptionsDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets JVM target version
-     * @param target the JVM target version from the JvmTarget enum
+     * JVM target property
      */
-    public fun jvmTarget(target: KotlinJvmTarget) {
-        line("jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.${target.value}")
-    }
+    public var jvmTarget: KotlinJvmTarget by PropertyDelegate(parent) { "org.jetbrains.kotlin.gradle.dsl.JvmTarget.${it.value}" }
 
     /**
      * Enables experimental features
@@ -660,39 +648,29 @@ public class KotlinCompilerOptionsDsl(private val parent: GradleDsl) : GradleDsl
     }
 
     /**
-     * Sets language version
+     * Language version property
      */
-    public fun languageVersion(version: String) {
-        line("languageVersion = \"$version\"")
-    }
+    public var languageVersion: String by PropertyDelegate(parent)
 
     /**
-     * Sets API version
+     * API version property
      */
-    public fun apiVersion(version: String) {
-        line("apiVersion = \"$version\"")
-    }
+    public var apiVersion: String by PropertyDelegate(parent)
 
     /**
-     * Enables or disables allWarningsAsErrors
+     * Warnings as errors property
      */
-    public fun allWarningsAsErrors(value: Boolean) {
-        line("allWarningsAsErrors = $value")
-    }
+    public var allWarningsAsErrors: Boolean by PropertyDelegate(parent)
 
     /**
-     * Enables or disables progressive mode
+     * Progressive mode property
      */
-    public fun progressiveMode(value: Boolean) {
-        line("progressiveMode = $value")
-    }
+    public var progressiveMode: Boolean by PropertyDelegate(parent)
 
     /**
-     * Sets useK2 compiler flag
+     * K2 compiler property
      */
-    public fun useK2(value: Boolean) {
-        line("useK2 = $value")
-    }
+    public var useK2: Boolean by PropertyDelegate(parent)
 }
 
 /**

@@ -51,7 +51,7 @@ class BuildGradleDslTest {
                     mavenPublication("javaLib") {
                         fromComponent("java")
                         pom {
-                            description("Test library")
+                            description = "Test library"
                             licenses {
                                 apache2()
                             }
@@ -99,7 +99,7 @@ class BuildGradleDslTest {
             kotlinMultiplatform {
                 jvm {
                     compilerOptions {
-                        jvmTarget(KotlinJvmTarget.JVM_17)
+                        jvmTarget = KotlinJvmTarget.JVM_17
                     }
                 }
                 linuxX64()
@@ -189,7 +189,7 @@ class BuildGradleDslTest {
         val content = buildGradleKts {
             task("createTestFile") {
                 group("build")
-                description("Creates a test file")
+                description = "Creates a test file"
                 doLast {
                     file("src/main/resources/test.txt") {
                         mkdirs()

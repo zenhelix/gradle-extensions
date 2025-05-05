@@ -9,25 +9,9 @@ import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectCollec
  */
 public class AndroidLibraryDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets the namespace
-     */
-    @Deprecated("Use property assignment instead", ReplaceWith("namespace = value"))
-    public fun namespace(value: String) {
-        line("namespace = \"$value\"")
-    }
-
-    /**
      * Direct property assignment for namespace
      */
     public var namespace: String by PropertyDelegate(parent)
-
-    /**
-     * Sets the compileSdk version
-     */
-    @Deprecated("Use property assignment instead", ReplaceWith("compileSdk = version"))
-    public fun compileSdk(version: Int) {
-        line("compileSdk = $version")
-    }
 
     /**
      * Direct property assignment for compileSdk
@@ -35,25 +19,9 @@ public class AndroidLibraryDsl(private val parent: GradleDsl) : GradleDsl by par
     public var compileSdk: Int by PropertyDelegate(parent)
 
     /**
-     * Sets the compileSdkPreview version
-     */
-    @Deprecated("Use property assignment instead", ReplaceWith("compileSdkPreview = version"))
-    public fun compileSdkPreview(version: String) {
-        line("compileSdkPreview = \"$version\"")
-    }
-
-    /**
      * Direct property assignment for compileSdkPreview
      */
     public var compileSdkPreview: String by PropertyDelegate(parent)
-
-    /**
-     * Sets the resourcePrefix
-     */
-    @Deprecated("Use property assignment instead", ReplaceWith("resourcePrefix = prefix"))
-    public fun resourcePrefix(prefix: String) {
-        line("resourcePrefix = \"$prefix\"")
-    }
 
     /**
      * Direct property assignment for resourcePrefix
@@ -146,25 +114,9 @@ public class AndroidLibraryDsl(private val parent: GradleDsl) : GradleDsl by par
  */
 public class AndroidLibraryBuildFeaturesDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Enables/disables viewBinding feature
-     */
-    @Deprecated("Use property assignment instead", ReplaceWith("viewBinding = enabled"))
-    public fun viewBinding(enabled: Boolean) {
-        line("viewBinding = $enabled")
-    }
-
-    /**
      * Direct property assignment for viewBinding
      */
     public var viewBinding: Boolean by PropertyDelegate(parent)
-
-    /**
-     * Enables/disables dataBinding feature
-     */
-    @Deprecated("Use property assignment instead", ReplaceWith("dataBinding = enabled"))
-    public fun dataBinding(enabled: Boolean) {
-        line("dataBinding = $enabled")
-    }
 
     /**
      * Direct property assignment for dataBinding
@@ -172,25 +124,9 @@ public class AndroidLibraryBuildFeaturesDsl(private val parent: GradleDsl) : Gra
     public var dataBinding: Boolean by PropertyDelegate(parent)
 
     /**
-     * Enables/disables compose feature
-     */
-    @Deprecated("Use property assignment instead", ReplaceWith("compose = enabled"))
-    public fun compose(enabled: Boolean) {
-        line("compose = $enabled")
-    }
-
-    /**
      * Direct property assignment for compose
      */
     public var compose: Boolean by PropertyDelegate(parent)
-
-    /**
-     * Enables/disables buildConfig feature
-     */
-    @Deprecated("Use property assignment instead", ReplaceWith("buildConfig = enabled"))
-    public fun buildConfig(enabled: Boolean) {
-        line("buildConfig = $enabled")
-    }
 
     /**
      * Direct property assignment for buildConfig
@@ -198,25 +134,9 @@ public class AndroidLibraryBuildFeaturesDsl(private val parent: GradleDsl) : Gra
     public var buildConfig: Boolean by PropertyDelegate(parent)
 
     /**
-     * Enables/disables aidl feature
-     */
-    @Deprecated("Use property assignment instead", ReplaceWith("aidl = enabled"))
-    public fun aidl(enabled: Boolean) {
-        line("aidl = $enabled")
-    }
-
-    /**
      * Direct property assignment for aidl
      */
     public var aidl: Boolean by PropertyDelegate(parent)
-
-    /**
-     * Enables/disables renderScript feature
-     */
-    @Deprecated("Use property assignment instead", ReplaceWith("renderScript = enabled"))
-    public fun renderScript(enabled: Boolean) {
-        line("renderScript = $enabled")
-    }
 
     /**
      * Direct property assignment for renderScript
@@ -224,25 +144,9 @@ public class AndroidLibraryBuildFeaturesDsl(private val parent: GradleDsl) : Gra
     public var renderScript: Boolean by PropertyDelegate(parent)
 
     /**
-     * Enables/disables resValues feature
-     */
-    @Deprecated("Use property assignment instead", ReplaceWith("resValues = enabled"))
-    public fun resValues(enabled: Boolean) {
-        line("resValues = $enabled")
-    }
-
-    /**
      * Direct property assignment for resValues
      */
     public var resValues: Boolean by PropertyDelegate(parent)
-
-    /**
-     * Enables/disables shaders feature
-     */
-    @Deprecated("Use property assignment instead", ReplaceWith("shaders = enabled"))
-    public fun shaders(enabled: Boolean) {
-        line("shaders = $enabled")
-    }
 
     /**
      * Direct property assignment for shaders
@@ -255,25 +159,9 @@ public class AndroidLibraryBuildFeaturesDsl(private val parent: GradleDsl) : Gra
  */
 public class AndroidLibraryDefaultConfigDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets the minimum SDK version
-     */
-    @Deprecated("Use property assignment instead", ReplaceWith("minSdk = version"))
-    public fun minSdk(version: Int) {
-        line("minSdk = $version")
-    }
-
-    /**
      * Direct property assignment for minSdk
      */
     public var minSdk: Int by PropertyDelegate(parent)
-
-    /**
-     * Sets the target SDK version
-     */
-    @Deprecated("deprecated in android plugins", ReplaceWith("targetSdk = version"))
-    public fun targetSdk(version: Int) {
-        line("targetSdk = $version")
-    }
 
     /**
      * Direct property assignment for targetSdk
@@ -282,25 +170,9 @@ public class AndroidLibraryDefaultConfigDsl(private val parent: GradleDsl) : Gra
     public var targetSdk: Int by PropertyDelegate(parent)
 
     /**
-     * Sets testInstrumentationRunner
-     */
-    @Deprecated("Use property assignment instead", ReplaceWith("testInstrumentationRunner = runner"))
-    public fun testInstrumentationRunner(runner: String) {
-        line("testInstrumentationRunner = \"$runner\"")
-    }
-
-    /**
      * Direct property assignment for testInstrumentationRunner
      */
     public var testInstrumentationRunner: String by PropertyDelegate(parent)
-
-    /**
-     * Sets test functions names
-     */
-    @Deprecated("Use property assignment instead", ReplaceWith("testFunctionalTest = value"))
-    public fun testFunctionalTest(value: Boolean) {
-        line("testFunctionalTest = $value")
-    }
 
     /**
      * Direct property assignment for testFunctionalTest

@@ -82,22 +82,22 @@ class PublishingDslTest {
 
                     withType("MavenPublication") {
                         pom {
-                            name("Test Project")
-                            description("A test project for Gradle DSL")
-                            url("https://github.com/zenhelix/gradle-test-dsl")
+                            name = "Test Project"
+                            description = "A test project for Gradle DSL"
+                            url = "https://github.com/zenhelix/gradle-test-dsl"
 
                             licenses {
                                 license {
-                                    name("The Apache License, Version 2.0")
-                                    url("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                                    name = "The Apache License, Version 2.0"
+                                    url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
                                 }
                             }
 
                             developers {
                                 developer {
-                                    id("zenhelix")
-                                    name("Zen Helix")
-                                    email("dev@zenhelix.io")
+                                    id = "zenhelix"
+                                    name = "Zen Helix"
+                                    email = "dev@zenhelix.io"
                                 }
                             }
                         }
