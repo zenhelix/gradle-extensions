@@ -14,8 +14,8 @@ class PublishingDslTest {
                 id("signing")
             }
 
-            group("io.github.zenhelix")
-            version("1.0.0")
+            group = "io.github.zenhelix"
+            version = "1.0.0"
 
             publishing {
                 repositories {
@@ -71,8 +71,8 @@ class PublishingDslTest {
                 id("maven-publish")
             }
 
-            group("io.github.zenhelix")
-            version("1.0.0")
+            group = "io.github.zenhelix"
+            version = "1.0.0"
 
             publishing {
                 publications {

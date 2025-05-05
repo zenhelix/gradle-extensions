@@ -16,12 +16,13 @@ class BuildGradleDslTest {
             }
 
             allprojects {
-                group("test.zenhelix")
-                version("0.1.0")
+                group = "test.zenhelix"
+                version = "0.1.0"
             }
         }
 
-        assertThat(content).isEqualTo("""
+        assertThat(content).isEqualTo(
+            """
             plugins {
                 id("io.github.zenhelix.test")
                 `java-library`
@@ -31,7 +32,8 @@ class BuildGradleDslTest {
                 version = "0.1.0"
             }
             
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     @Test
@@ -61,7 +63,8 @@ class BuildGradleDslTest {
             }
         }
 
-        assertThat(content).isEqualTo("""
+        assertThat(content).isEqualTo(
+            """
             plugins {
                 id("io.github.zenhelix.test")
             }
@@ -85,7 +88,8 @@ class BuildGradleDslTest {
                 }
             }
             
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     @Test
@@ -115,7 +119,8 @@ class BuildGradleDslTest {
             }
         }
 
-        assertThat(content).isEqualTo("""
+        assertThat(content).isEqualTo(
+            """
             plugins {
                 id("org.jetbrains.kotlin.multiplatform") version "2.1.0"
             }
@@ -136,7 +141,8 @@ class BuildGradleDslTest {
                 }
             }
             
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     @Test
@@ -156,13 +162,14 @@ class BuildGradleDslTest {
                 }
                 buildTypes {
                     release {
-                        minifyEnabled(true)
+                        isMinifyEnabled = true
                     }
                 }
             }
         }
 
-        assertThat(content).isEqualTo("""
+        assertThat(content).isEqualTo(
+            """
             plugins {
                 id("com.android.library") version "8.2.0"
             }
@@ -180,7 +187,8 @@ class BuildGradleDslTest {
                 }
             }
             
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     @Test
@@ -188,21 +196,24 @@ class BuildGradleDslTest {
 
         val content = buildGradleKts {
             task("createTestFile") {
-                group("build")
+                group = "build"
                 description = "Creates a test file"
                 doLast {
                     file("src/main/resources/test.txt") {
                         mkdirs()
-                        writeText("""
+                        writeText(
+                            """
                         Hello, World!
                         This is a test file.
-                        """)
+                        """
+                        )
                     }
                 }
             }
         }
 
-        assertThat(content).isEqualTo("""
+        assertThat(content).isEqualTo(
+            """
             tasks.register("createTestFile") {
                 group = "build"
                 description = "Creates a test file"
@@ -217,6 +228,7 @@ class BuildGradleDslTest {
                 }
             }
             
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 }

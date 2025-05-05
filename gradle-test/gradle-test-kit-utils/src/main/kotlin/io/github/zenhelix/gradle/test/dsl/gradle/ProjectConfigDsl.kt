@@ -1,6 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl.gradle
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
 
 /**
  * DSL for project configuration
@@ -9,23 +10,17 @@ public class ProjectConfigDsl(private val parent: GradleDsl) : GradleDsl by pare
     /**
      * Sets the project group
      */
-    public fun group(value: String) {
-        line("group = \"$value\"")
-    }
+    public var group: String by PropertyDelegate(parent)
 
     /**
      * Sets the project version
      */
-    public fun version(value: String) {
-        line("version = \"$value\"")
-    }
+    public var version: String by PropertyDelegate(parent)
 
     /**
      * Sets the project description
      */
-    public fun description(value: String) {
-        line("description = \"$value\"")
-    }
+    public var description: String by PropertyDelegate(parent)
 
     /**
      * Configures apply block

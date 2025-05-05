@@ -227,9 +227,7 @@ public class AndroidLibraryProductFlavorDsl(private val parent: GradleDsl) : Gra
     /**
      * Sets the dimension
      */
-    public fun dimension(value: String) {
-        line("dimension = \"$value\"")
-    }
+    public var dimension: String by PropertyDelegate(parent)
 
     /**
      * Adds a build config field
@@ -285,30 +283,22 @@ public class AndroidLibraryBuildTypeDsl(private val parent: GradleDsl) : GradleD
     /**
      * Enables/disables minification
      */
-    public fun minifyEnabled(enabled: Boolean) {
-        line("isMinifyEnabled = $enabled")
-    }
+    public var isMinifyEnabled: Boolean by PropertyDelegate(parent)
 
     /**
      * Sets debuggable property
      */
-    public fun debuggable(value: Boolean) {
-        line("isDebuggable = $value")
-    }
+    public var isDebuggable: Boolean by PropertyDelegate(parent)
 
     /**
      * Sets jniDebuggable property
      */
-    public fun jniDebuggable(value: Boolean) {
-        line("isJniDebuggable = $value")
-    }
+    public var isJniDebuggable: Boolean by PropertyDelegate(parent)
 
     /**
      * Sets shrinkResources property
      */
-    public fun shrinkResources(value: Boolean) {
-        line("isShrinkResources = $value")
-    }
+    public var isShrinkResources: Boolean by PropertyDelegate(parent)
 
     /**
      * Adds a build config field

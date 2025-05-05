@@ -56,16 +56,12 @@ public class BuildGradleDsl : GradleDslImpl() {
         }
     }
 
-    public fun group(value: String) {
-        line("group = \"$value\"")
-    }
+    public var group: String by PropertyDelegate(this)
 
     /**
      * Sets the project version
      */
-    public fun version(value: String) {
-        line("version = \"$value\"")
-    }
+    public var version: String by PropertyDelegate(this)
 
     /**
      * Configures allprojects block
