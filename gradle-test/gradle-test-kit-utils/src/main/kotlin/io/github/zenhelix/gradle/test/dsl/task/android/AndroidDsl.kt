@@ -1,6 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl.task.android
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
 import org.gradle.api.JavaVersion
 
 /**
@@ -10,9 +11,15 @@ public class VectorDrawablesOptionsDsl(private val parent: GradleDsl) : GradleDs
     /**
      * Sets useSupportLibrary property
      */
+    @Deprecated("Use property assignment instead", ReplaceWith("useSupportLibrary = value"))
     public fun useSupportLibrary(value: Boolean) {
         line("useSupportLibrary = $value")
     }
+
+    /**
+     * Direct property assignment for useSupportLibrary
+     */
+    public var useSupportLibrary: Boolean by PropertyDelegate(parent)
 }
 
 /**
@@ -99,23 +106,41 @@ public class AndroidCompileOptionsDsl(private val parent: GradleDsl) : GradleDsl
     /**
      * Sets the source compatibility
      */
+    @Deprecated("Use property assignment instead", ReplaceWith("sourceCompatibility = version"))
     public fun sourceCompatibility(version: JavaVersion) {
         line("sourceCompatibility = JavaVersion.${version.name}")
     }
 
     /**
+     * Direct property assignment for sourceCompatibility
+     */
+    public var sourceCompatibility: JavaVersion by PropertyDelegate(parent) { "JavaVersion.${it.name}" }
+
+    /**
      * Sets the target compatibility
      */
+    @Deprecated("Use property assignment instead", ReplaceWith("targetCompatibility = version"))
     public fun targetCompatibility(version: JavaVersion) {
         line("targetCompatibility = JavaVersion.${version.name}")
     }
 
     /**
+     * Direct property assignment for targetCompatibility
+     */
+    public var targetCompatibility: JavaVersion by PropertyDelegate(parent) { "JavaVersion.${it.name}" }
+
+    /**
      * Enables/disables core library desugaring
      */
+    @Deprecated("Use property assignment instead", ReplaceWith("isCoreLibraryDesugaringEnabled = enabled"))
     public fun coreLibraryDesugaringEnabled(enabled: Boolean) {
         line("isCoreLibraryDesugaringEnabled = $enabled")
     }
+
+    /**
+     * Direct property assignment for isCoreLibraryDesugaringEnabled
+     */
+    public var isCoreLibraryDesugaringEnabled: Boolean by PropertyDelegate(parent)
 }
 
 /**
@@ -176,14 +201,26 @@ public class AndroidUnitTestsDsl(private val parent: GradleDsl) : GradleDsl by p
     /**
      * Sets isIncludeAndroidResources property
      */
+    @Deprecated("Use property assignment instead", ReplaceWith("isIncludeAndroidResources = include"))
     public fun includeAndroidResources(include: Boolean) {
         line("isIncludeAndroidResources = $include")
     }
 
     /**
+     * Direct property assignment for isIncludeAndroidResources
+     */
+    public var isIncludeAndroidResources: Boolean by PropertyDelegate(parent)
+
+    /**
      * Sets isReturnDefaultValues property
      */
+    @Deprecated("Use property assignment instead", ReplaceWith("isReturnDefaultValues = returnDefaults"))
     public fun returnDefaultValues(returnDefaults: Boolean) {
         line("isReturnDefaultValues = $returnDefaults")
     }
+
+    /**
+     * Direct property assignment for isReturnDefaultValues
+     */
+    public var isReturnDefaultValues: Boolean by PropertyDelegate(parent)
 }

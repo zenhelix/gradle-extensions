@@ -148,11 +148,11 @@ class BuildGradleDslTest {
             }
 
             androidLibrary {
-                namespace("com.example.app")
-                compileSdk(34)
+                namespace = "com.example.app"
+                compileSdk = 34
                 defaultConfig {
-                    minSdk(24)
-                    targetSdk(34)
+                    minSdk = 24
+                    targetSdk = 34
                 }
                 buildTypes {
                     release {

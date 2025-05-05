@@ -30,6 +30,24 @@ public interface GradleDsl {
     public val dslPath: DslPath
 
     public fun <T : GradleDsl> withDsl(dsl: T, init: T.() -> Unit)
+
+    /**
+     * Property delegation for DSL properties
+     */
+    public operator fun <T> setValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>, value: T) {
+        line("${property.name} = ${formatValue(value)}")
+    }
+
+    /**
+     * Formats a value for output in generated code
+     */
+    public fun formatValue(value: Any?): String {
+        return when (value) {
+            is String -> "\"$value\""
+            is Boolean, is Number -> value.toString()
+            else -> value.toString()
+        }
+    }
 }
 
 /**
@@ -77,6 +95,21 @@ public open class GradleDslImpl(
      */
     protected open fun createChildDsl(blockName: String): GradleDslImpl {
         return GradleDslImpl(dslPath.append(blockName))
+    }
+
+    /**
+     * Property delegation support - implemented from GradleDsl interface
+     */
+    override operator fun <T> setValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>, value: T) {
+        line("${property.name} = ${formatValue(value)}")
+    }
+
+    override fun formatValue(value: Any?): String {
+        return when (value) {
+            is String -> "\"$value\""
+            is Boolean, is Number -> value.toString()
+            else -> value.toString()
+        }
     }
 }
 
