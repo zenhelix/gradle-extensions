@@ -1,6 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl.task
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
 import org.gradle.api.JavaVersion
 
 /**
@@ -8,18 +9,14 @@ import org.gradle.api.JavaVersion
  */
 public class JavaDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets source compatibility
+     * Source compatibility property
      */
-    public fun sourceCompatibility(version: JavaVersion) {
-        line("sourceCompatibility = JavaVersion.${version.name}")
-    }
+    public var sourceCompatibility: JavaVersion by PropertyDelegate(parent) { "JavaVersion.${it.name}" }
 
     /**
-     * Sets target compatibility
+     * Target compatibility property
      */
-    public fun targetCompatibility(version: JavaVersion) {
-        line("targetCompatibility = JavaVersion.${version.name}")
-    }
+    public var targetCompatibility: JavaVersion by PropertyDelegate(parent) { "JavaVersion.${it.name}" }
 
     /**
      * Configures java toolchain
@@ -50,16 +47,12 @@ public class JavaDsl(private val parent: GradleDsl) : GradleDsl by parent {
  */
 public class JavaToolchainDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets the language version
+     * Language version property
      */
-    public fun languageVersion(version: Int) {
-        line("languageVersion = JavaLanguageVersion.of($version)")
-    }
+    public var languageVersion: Int by PropertyDelegate(parent) { "JavaLanguageVersion.of($it)" }
 
     /**
-     * Sets the vendor
+     * Vendor property
      */
-    public fun vendor(vendor: String) {
-        line("vendor = JvmVendorSpec.${vendor}")
-    }
+    public var vendor: String by PropertyDelegate(parent) { "JvmVendorSpec.${it}" }
 }

@@ -1,14 +1,27 @@
 package io.github.zenhelix.gradle.test.dsl.task
 
+import io.github.zenhelix.gradle.test.dsl.DslPath
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
+import io.github.zenhelix.gradle.test.dsl.gradle.AbstractPolymorphicDomainObjectContainerDsl
 import io.github.zenhelix.gradle.test.dsl.gradle.RepositoryHandlerDsl
 
 /**
  * DSL for publishing block
  */
 public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent {
+    override val dslPath: DslPath = parent.dslPath.append("publishing")
+
+    private val publicationsDsl = PublicationsDsl(this)
+
     /**
-     * Configures repositories for publishing
+     * Access to publications
+     */
+    public val publications: PublicationsDsl
+        get() = publicationsDsl
+
+    /**
+     * Configures repositories for publications
      */
     public fun repositories(init: RepositoryHandlerDsl.() -> Unit) {
         block("repositories") {
@@ -21,51 +34,55 @@ public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent 
      */
     public fun publications(init: PublicationsDsl.() -> Unit) {
         block("publications") {
-            PublicationsDsl(this).apply(init)
+            withDsl(publicationsDsl, init)
         }
     }
 }
 
 /**
+ * Marker interface for publications
+ */
+public interface Publication
+
+/**
  * DSL for publications
  */
-public class PublicationsDsl(private val parent: GradleDsl) : GradleDsl by parent {
+public class PublicationsDsl(
+    override val parent: GradleDsl
+) : AbstractPolymorphicDomainObjectContainerDsl<Publication, MavenPublicationDsl>(parent, "publications") {
+    override val dslPath: DslPath = parent.dslPath.append("publications")
+
     /**
-     * Creates a Maven publication
+     * Creates configurator for publication
+     */
+    override fun createConfigurator(dsl: GradleDsl): MavenPublicationDsl = MavenPublicationDsl(dsl)
+
+    /**
+     * Creates Maven publication
      */
     public fun mavenPublication(name: String, init: MavenPublicationDsl.() -> Unit) {
-        block("create<MavenPublication>(\"$name\")") {
-            MavenPublicationDsl(this).apply(init)
-        }
+        create<Publication>("MavenPublication", name, init)
     }
-
 }
 
 /**
  * DSL for Maven publication
  */
 public class MavenPublicationDsl(private val parent: GradleDsl) : GradleDsl by parent {
+    /**
+     * Group ID property
+     */
+    public var groupId: String by PropertyDelegate(parent)
 
     /**
-     * Sets the groupId explicitly
+     * Artifact ID property
      */
-    public fun groupId(value: String) {
-        line("groupId = \"$value\"")
-    }
+    public var artifactId: String by PropertyDelegate(parent)
 
     /**
-     * Sets the artifactId explicitly
+     * Version property
      */
-    public fun artifactId(value: String) {
-        line("artifactId = \"$value\"")
-    }
-
-    /**
-     * Sets the version explicitly
-     */
-    public fun version(value: String) {
-        line("version = \"$value\"")
-    }
+    public var version: String by PropertyDelegate(parent)
 
     public fun fromComponent(vararg component: String) {
         val components = component.joinToString("\", \"", "\"", "\"")
@@ -80,34 +97,26 @@ public class MavenPublicationDsl(private val parent: GradleDsl) : GradleDsl by p
             PomDsl(this).apply(init)
         }
     }
-
 }
-
 
 /**
  * DSL for POM
  */
 public class PomDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets the description
+     * Description property
      */
-    public fun description(value: String) {
-        line("description = \"$value\"")
-    }
+    public var description: String by PropertyDelegate(parent)
 
     /**
-     * Sets the URL
+     * URL property
      */
-    public fun url(value: String) {
-        line("url = \"$value\"")
-    }
+    public var url: String by PropertyDelegate(parent)
 
     /**
-     * Sets the name
+     * Name property
      */
-    public fun name(value: String) {
-        line("name = \"$value\"")
-    }
+    public var name: String by PropertyDelegate(parent)
 
     /**
      * Configures licenses
@@ -144,7 +153,6 @@ public class PomDsl(private val parent: GradleDsl) : GradleDsl by parent {
             IssueManagementDsl(this).apply(init)
         }
     }
-
 }
 
 /**
@@ -152,18 +160,14 @@ public class PomDsl(private val parent: GradleDsl) : GradleDsl by parent {
  */
 public class IssueManagementDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets the system
+     * System property
      */
-    public fun system(value: String) {
-        line("system = \"$value\"")
-    }
+    public var system: String by PropertyDelegate(parent)
 
     /**
-     * Sets the URL
+     * URL property
      */
-    public fun url(value: String) {
-        line("url = \"$value\"")
-    }
+    public var url: String by PropertyDelegate(parent)
 }
 
 /**
@@ -184,8 +188,8 @@ public class LicensesDsl(private val parent: GradleDsl) : GradleDsl by parent {
      */
     public fun apache2() {
         license {
-            name("The Apache License, Version 2.0")
-            url("https://www.apache.org/licenses/LICENSE-2.0.txt")
+            name = "The Apache License, Version 2.0"
+            url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
         }
     }
 
@@ -194,8 +198,8 @@ public class LicensesDsl(private val parent: GradleDsl) : GradleDsl by parent {
      */
     public fun mit() {
         license {
-            name("MIT License")
-            url("https://opensource.org/licenses/MIT")
+            name = "MIT License"
+            url = "https://opensource.org/licenses/MIT"
         }
     }
 
@@ -204,8 +208,8 @@ public class LicensesDsl(private val parent: GradleDsl) : GradleDsl by parent {
      */
     public fun gpl3() {
         license {
-            name("GNU General Public License v3.0")
-            url("https://www.gnu.org/licenses/gpl-3.0.txt")
+            name = "GNU General Public License v3.0"
+            url = "https://www.gnu.org/licenses/gpl-3.0.txt"
         }
     }
 
@@ -214,8 +218,8 @@ public class LicensesDsl(private val parent: GradleDsl) : GradleDsl by parent {
      */
     public fun lgpl3() {
         license {
-            name("GNU Lesser General Public License v3.0")
-            url("https://www.gnu.org/licenses/lgpl-3.0.txt")
+            name = "GNU Lesser General Public License v3.0"
+            url = "https://www.gnu.org/licenses/lgpl-3.0.txt"
         }
     }
 
@@ -224,8 +228,8 @@ public class LicensesDsl(private val parent: GradleDsl) : GradleDsl by parent {
      */
     public fun bsd3Clause() {
         license {
-            name("BSD 3-Clause License")
-            url("https://opensource.org/licenses/BSD-3-Clause")
+            name = "BSD 3-Clause License"
+            url = "https://opensource.org/licenses/BSD-3-Clause"
         }
     }
 }
@@ -235,32 +239,24 @@ public class LicensesDsl(private val parent: GradleDsl) : GradleDsl by parent {
  */
 public class LicenseDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets the license name
+     * Name property
      */
-    public fun name(value: String) {
-        line("name = \"$value\"")
-    }
+    public var name: String by PropertyDelegate(parent)
 
     /**
-     * Sets the license URL
+     * URL property
      */
-    public fun url(value: String) {
-        line("url = \"$value\"")
-    }
+    public var url: String by PropertyDelegate(parent)
 
     /**
-     * Sets the license distribution
+     * Distribution property
      */
-    public fun distribution(value: String) {
-        line("distribution = \"$value\"")
-    }
+    public var distribution: String by PropertyDelegate(parent)
 
     /**
-     * Sets the license comments
+     * Comments property
      */
-    public fun comments(value: String) {
-        line("comments = \"$value\"")
-    }
+    public var comments: String by PropertyDelegate(parent)
 }
 
 /**
@@ -268,41 +264,25 @@ public class LicenseDsl(private val parent: GradleDsl) : GradleDsl by parent {
  */
 public class ScmDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets the connection
+     * Connection property
      */
-    public fun connection(value: String) {
-        line("connection = \"$value\"")
-    }
+    public var connection: String by PropertyDelegate(parent)
 
     /**
-     * Sets the developer connection
+     * Developer connection property
      */
-    public fun developerConnection(value: String) {
-        line("developerConnection = \"$value\"")
-    }
+    public var developerConnection: String by PropertyDelegate(parent)
 
     /**
-     * Sets the URL
+     * URL property
      */
-    public fun url(value: String) {
-        line("url = \"$value\"")
-    }
+    public var url: String by PropertyDelegate(parent)
 
     /**
-     * Sets the tag
+     * Tag property
      */
-    public fun tag(value: String) {
-        line("tag = \"$value\"")
-    }
+    public var tag: String by PropertyDelegate(parent)
 
-    /**
-     * Configures Git SCM
-     */
-    public fun git(repoUrl: String) {
-        connection("scm:git:git://$repoUrl.git")
-        developerConnection("scm:git:ssh://$repoUrl.git")
-        url("https://$repoUrl")
-    }
 }
 
 /**
@@ -324,46 +304,34 @@ public class DevelopersDsl(private val parent: GradleDsl) : GradleDsl by parent 
  */
 public class DeveloperDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets the developer ID
+     * ID property
      */
-    public fun id(value: String) {
-        line("id = \"$value\"")
-    }
+    public var id: String by PropertyDelegate(parent)
 
     /**
-     * Sets the developer name
+     * Name property
      */
-    public fun name(value: String) {
-        line("name = \"$value\"")
-    }
+    public var name: String by PropertyDelegate(parent)
 
     /**
-     * Sets the developer email
+     * Email property
      */
-    public fun email(value: String) {
-        line("email = \"$value\"")
-    }
+    public var email: String by PropertyDelegate(parent)
 
     /**
-     * Sets the developer URL
+     * URL property
      */
-    public fun url(value: String) {
-        line("url = \"$value\"")
-    }
+    public var url: String by PropertyDelegate(parent)
 
     /**
-     * Sets the developer organization
+     * Organization property
      */
-    public fun organization(value: String) {
-        line("organization = \"$value\"")
-    }
+    public var organization: String by PropertyDelegate(parent)
 
     /**
-     * Sets the developer organization URL
+     * Organization URL property
      */
-    public fun organizationUrl(value: String) {
-        line("organizationUrl = \"$value\"")
-    }
+    public var organizationUrl: String by PropertyDelegate(parent)
 
     /**
      * Sets the developer roles
@@ -376,9 +344,7 @@ public class DeveloperDsl(private val parent: GradleDsl) : GradleDsl by parent {
     }
 
     /**
-     * Sets the developer timezone
+     * Timezone property
      */
-    public fun timezone(value: String) {
-        line("timezone = \"$value\"")
-    }
+    public var timezone: String by PropertyDelegate(parent)
 }

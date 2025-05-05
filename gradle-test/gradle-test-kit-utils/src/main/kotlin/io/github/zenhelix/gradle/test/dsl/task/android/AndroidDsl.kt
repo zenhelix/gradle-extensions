@@ -1,6 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl.task.android
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
 import org.gradle.api.JavaVersion
 
 /**
@@ -8,13 +9,10 @@ import org.gradle.api.JavaVersion
  */
 public class VectorDrawablesOptionsDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets useSupportLibrary property
+     * Direct property assignment for useSupportLibrary
      */
-    public fun useSupportLibrary(value: Boolean) {
-        line("useSupportLibrary = $value")
-    }
+    public var useSupportLibrary: Boolean by PropertyDelegate(parent)
 }
-
 
 /**
  * DSL for Android sourceSets
@@ -93,47 +91,38 @@ public class AndroidSourceSetDsl(private val parent: GradleDsl) : GradleDsl by p
     }
 }
 
-
 /**
  * DSL for Android compileOptions
  */
 public class AndroidCompileOptionsDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets the source compatibility
+     * Direct property assignment for sourceCompatibility
      */
-    public fun sourceCompatibility(version: JavaVersion) {
-        line("sourceCompatibility = JavaVersion.${version.name}")
-    }
+    public var sourceCompatibility: JavaVersion by PropertyDelegate(parent) { "JavaVersion.${it.name}" }
 
     /**
-     * Sets the target compatibility
+     * Direct property assignment for targetCompatibility
      */
-    public fun targetCompatibility(version: JavaVersion) {
-        line("targetCompatibility = JavaVersion.${version.name}")
-    }
+    public var targetCompatibility: JavaVersion by PropertyDelegate(parent) { "JavaVersion.${it.name}" }
 
     /**
-     * Enables/disables core library desugaring
+     * Direct property assignment for isCoreLibraryDesugaringEnabled
      */
-    public fun isCoreLibraryDesugaringEnabled(enabled: Boolean) {
-        line("isCoreLibraryDesugaringEnabled = $enabled")
-    }
+    public var isCoreLibraryDesugaringEnabled: Boolean by PropertyDelegate(parent)
 }
-
 
 /**
  * DSL for Android packaging
  */
 public class AndroidPackagingDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Configures resources to exclude
+     * Configures resources for packaging
      */
     public fun resources(init: AndroidPackagingResourcesDsl.() -> Unit) {
         block("resources") {
             AndroidPackagingResourcesDsl(this).apply(init)
         }
     }
-
 }
 
 /**
@@ -157,9 +146,7 @@ public class AndroidPackagingResourcesDsl(private val parent: GradleDsl) : Gradl
         val patternsStr = patterns.joinToString("\", \"", "\"", "\"")
         line("merges += setOf($patternsStr)")
     }
-
 }
-
 
 /**
  * DSL for Android testOptions
@@ -180,16 +167,12 @@ public class AndroidTestOptionsDsl(private val parent: GradleDsl) : GradleDsl by
  */
 public class AndroidUnitTestsDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets isIncludeAndroidResources property
+     * Direct property assignment for isIncludeAndroidResources
      */
-    public fun isIncludeAndroidResources(include: Boolean) {
-        line("isIncludeAndroidResources = $include")
-    }
+    public var isIncludeAndroidResources: Boolean by PropertyDelegate(parent)
 
     /**
-     * Sets isReturnDefaultValues property
+     * Direct property assignment for isReturnDefaultValues
      */
-    public fun isReturnDefaultValues(returnDefaults: Boolean) {
-        line("isReturnDefaultValues = $returnDefaults")
-    }
+    public var isReturnDefaultValues: Boolean by PropertyDelegate(parent)
 }

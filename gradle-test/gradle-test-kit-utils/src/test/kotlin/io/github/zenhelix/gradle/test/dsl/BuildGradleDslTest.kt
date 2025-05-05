@@ -16,12 +16,13 @@ class BuildGradleDslTest {
             }
 
             allprojects {
-                group("test.zenhelix")
-                version("0.1.0")
+                group = "test.zenhelix"
+                version = "0.1.0"
             }
         }
 
-        assertThat(content).isEqualTo("""
+        assertThat(content).isEqualTo(
+            """
             plugins {
                 id("io.github.zenhelix.test")
                 `java-library`
@@ -31,7 +32,8 @@ class BuildGradleDslTest {
                 version = "0.1.0"
             }
             
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     @Test
@@ -51,7 +53,7 @@ class BuildGradleDslTest {
                     mavenPublication("javaLib") {
                         fromComponent("java")
                         pom {
-                            description("Test library")
+                            description = "Test library"
                             licenses {
                                 apache2()
                             }
@@ -61,7 +63,8 @@ class BuildGradleDslTest {
             }
         }
 
-        assertThat(content).isEqualTo("""
+        assertThat(content).isEqualTo(
+            """
             plugins {
                 id("io.github.zenhelix.test")
             }
@@ -85,7 +88,8 @@ class BuildGradleDslTest {
                 }
             }
             
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     @Test
@@ -99,7 +103,7 @@ class BuildGradleDslTest {
             kotlinMultiplatform {
                 jvm {
                     compilerOptions {
-                        jvmTarget(KotlinJvmTarget.JVM_17)
+                        jvmTarget = KotlinJvmTarget.JVM_17
                     }
                 }
                 linuxX64()
@@ -115,7 +119,8 @@ class BuildGradleDslTest {
             }
         }
 
-        assertThat(content).isEqualTo("""
+        assertThat(content).isEqualTo(
+            """
             plugins {
                 id("org.jetbrains.kotlin.multiplatform") version "2.1.0"
             }
@@ -136,7 +141,8 @@ class BuildGradleDslTest {
                 }
             }
             
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     @Test
@@ -148,21 +154,22 @@ class BuildGradleDslTest {
             }
 
             androidLibrary {
-                namespace("com.example.app")
-                compileSdk(34)
+                namespace = "com.example.app"
+                compileSdk = 34
                 defaultConfig {
-                    minSdk(24)
-                    targetSdk(34)
+                    minSdk = 24
+                    targetSdk = 34
                 }
                 buildTypes {
                     release {
-                        minifyEnabled(true)
+                        isMinifyEnabled = true
                     }
                 }
             }
         }
 
-        assertThat(content).isEqualTo("""
+        assertThat(content).isEqualTo(
+            """
             plugins {
                 id("com.android.library") version "8.2.0"
             }
@@ -180,7 +187,8 @@ class BuildGradleDslTest {
                 }
             }
             
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     @Test
@@ -188,21 +196,24 @@ class BuildGradleDslTest {
 
         val content = buildGradleKts {
             task("createTestFile") {
-                group("build")
-                description("Creates a test file")
+                group = "build"
+                description = "Creates a test file"
                 doLast {
                     file("src/main/resources/test.txt") {
                         mkdirs()
-                        writeText("""
+                        writeText(
+                            """
                         Hello, World!
                         This is a test file.
-                        """)
+                        """
+                        )
                     }
                 }
             }
         }
 
-        assertThat(content).isEqualTo("""
+        assertThat(content).isEqualTo(
+            """
             tasks.register("createTestFile") {
                 group = "build"
                 description = "Creates a test file"
@@ -217,6 +228,7 @@ class BuildGradleDslTest {
                 }
             }
             
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 }

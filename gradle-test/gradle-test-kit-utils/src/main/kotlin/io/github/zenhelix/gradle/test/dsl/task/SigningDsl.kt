@@ -1,11 +1,16 @@
 package io.github.zenhelix.gradle.test.dsl.task
 
+import io.github.zenhelix.gradle.test.dsl.DslPath
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
+import io.github.zenhelix.gradle.test.dsl.gradle.DslReference
 
 /**
  * DSL for signing
  */
 public class SigningDsl(private val parent: GradleDsl) : GradleDsl by parent {
+    override val dslPath: DslPath = parent.dslPath.append("signing")
+
     /**
      * Uses in-memory PGP keys
      */
@@ -21,10 +26,11 @@ public class SigningDsl(private val parent: GradleDsl) : GradleDsl by parent {
     }
 
     /**
-     * Sets the sign required property
+     * Required property
      */
-    public fun setRequired(value: Boolean) {
-        line("isRequired = $value")
-    }
+    public var isRequired: Boolean by PropertyDelegate(parent)
 
+    public fun sign(publicationsReference: DslReference<*>) {
+        line("sign($publicationsReference)")
+    }
 }

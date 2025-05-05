@@ -2,68 +2,122 @@ package io.github.zenhelix.gradle.test.dsl.gradle
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
 
-public class  DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by parent {
+public class DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
      * Adds a classpath dependency
      */
-    public fun classpath(dependency: String) {
-        line("classpath(\"$dependency\")")
+    public fun classpath(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
+        if (init == {}) {
+            line("classpath(\"$dependency\")")
+        } else {
+            block("classpath(\"$dependency\")") {
+                DependencyConfigDsl(this).apply(init)
+            }
+        }
     }
 
     /**
      * Adds an implementation dependency
      */
-    public fun implementation(dependency: String) {
-        line("implementation(\"$dependency\")")
+    public fun implementation(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
+        if (init == {}) {
+            line("implementation(\"$dependency\")")
+        } else {
+            block("implementation(\"$dependency\")") {
+                DependencyConfigDsl(this).apply(init)
+            }
+        }
     }
 
     /**
      * Adds a test implementation dependency
      */
-    public fun testImplementation(dependency: String) {
-        line("testImplementation(\"$dependency\")")
+    public fun testImplementation(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
+        if (init == {}) {
+            line("testImplementation(\"$dependency\")")
+        } else {
+            block("testImplementation(\"$dependency\")") {
+                DependencyConfigDsl(this).apply(init)
+            }
+        }
     }
 
     /**
      * Adds an API dependency
      */
-    public fun api(dependency: String) {
-        line("api(\"$dependency\")")
+    public fun api(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
+        if (init == {}) {
+            line("api(\"$dependency\")")
+        } else {
+            block("api(\"$dependency\")") {
+                DependencyConfigDsl(this).apply(init)
+            }
+        }
     }
 
     /**
      * Adds a compile only dependency
      */
-    public fun compileOnly(dependency: String) {
-        line("compileOnly(\"$dependency\")")
+    public fun compileOnly(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
+        if (init == {}) {
+            line("compileOnly(\"$dependency\")")
+        } else {
+            block("compileOnly(\"$dependency\")") {
+                DependencyConfigDsl(this).apply(init)
+            }
+        }
     }
 
     /**
      * Adds a runtime only dependency
      */
-    public fun runtimeOnly(dependency: String) {
-        line("runtimeOnly(\"$dependency\")")
+    public fun runtimeOnly(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
+        if (init == {}) {
+            line("runtimeOnly(\"$dependency\")")
+        } else {
+            block("runtimeOnly(\"$dependency\")") {
+                DependencyConfigDsl(this).apply(init)
+            }
+        }
     }
 
     /**
      * Adds a developmentOnly dependency
      */
-    public fun developmentOnly(dependency: String) {
-        line("developmentOnly(\"$dependency\")")
+    public fun developmentOnly(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
+        if (init == {}) {
+            line("developmentOnly(\"$dependency\")")
+        } else {
+            block("developmentOnly(\"$dependency\")") {
+                DependencyConfigDsl(this).apply(init)
+            }
+        }
     }
 
     /**
      * Adds an annotationProcessor dependency
      */
-    public fun annotationProcessor(dependency: String) {
-        line("annotationProcessor(\"$dependency\")")
+    public fun annotationProcessor(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
+        if (init == {}) {
+            line("annotationProcessor(\"$dependency\")")
+        } else {
+            block("annotationProcessor(\"$dependency\")") {
+                DependencyConfigDsl(this).apply(init)
+            }
+        }
     }
 
     /**
      * Adds a kapt dependency
      */
-    public fun kapt(dependency: String) {
-        line("kapt(\"$dependency\")")
+    public fun kapt(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
+        if (init == {}) {
+            line("kapt(\"$dependency\")")
+        } else {
+            block("kapt(\"$dependency\")") {
+                DependencyConfigDsl(this).apply(init)
+            }
+        }
     }
 
     /**
@@ -81,7 +135,7 @@ public class  DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by
     }
 
     /**
-     * Adds a implementation project dependency
+     * Adds an implementation project dependency
      */
     public fun implementationProject(path: String) {
         project("implementation", path)
@@ -104,8 +158,14 @@ public class  DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by
     /**
      * Adds a custom configuration dependency
      */
-    public fun custom(configuration: String, dependency: String) {
-        line("$configuration(\"$dependency\")")
+    public fun custom(configuration: String, dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
+        if (init == {}) {
+            line("$configuration(\"$dependency\")")
+        } else {
+            block("$configuration(\"$dependency\")") {
+                DependencyConfigDsl(this).apply(init)
+            }
+        }
     }
 
     /**
@@ -114,45 +174,19 @@ public class  DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by
     public fun fromVariable(configuration: String, variable: String) {
         line("$configuration($variable)")
     }
-
-    /**
-     * Adds a dependency with an exclude
-     */
-    public fun implementationWithExclude(dependency: String, group: String, module: String? = null) {
-        if (module != null) {
-            line("implementation(\"$dependency\") {")
-            line("    exclude(group = \"$group\", module = \"$module\")")
-            line("}")
-        } else {
-            line("implementation(\"$dependency\") {")
-            line("    exclude(group = \"$group\")")
-            line("}")
-        }
-    }
-
-    /**
-     * Adds a dependency with capabilities
-     */
-    public fun implementationWithCapabilities(dependency: String, init: CapabilitiesDsl.() -> Unit) {
-        block("implementation(\"$dependency\")") {
-            CapabilitiesDsl(this).apply(init)
-        }
-    }
-
 }
 
-
 /**
- * DSL for capabilities
+ * Unified DSL for dependency configuration including capabilities and exclusions
  */
-public class CapabilitiesDsl(private val parent: GradleDsl) : GradleDsl by parent {
+public class DependencyConfigDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
      * Adds a capability
      */
     public fun capability(group: String, name: String, version: String) {
-        line("capabilities {")
-        line("    requireCapability(\"$group:$name:$version\")")
-        line("}")
+        block("capabilities") {
+            line("requireCapability(\"$group:$name:$version\")")
+        }
     }
 
     /**

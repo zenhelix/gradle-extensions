@@ -1,6 +1,39 @@
 package io.github.zenhelix.gradle.test.dsl.task
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
+import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectCollectionDsl
+import org.gradle.api.Task
+
+/**
+ * DSL for Gradle tasks
+ */
+public class TasksDsl(parent: GradleDsl) :
+    AbstractNamedDomainObjectCollectionDsl<Task, TaskDsl>(parent, "tasks") {
+
+    /**
+     * Creates the configurator for a task
+     */
+    override fun createConfigurator(dsl: GradleDsl): TaskDsl = TaskDsl(dsl)
+
+    /**
+     * Registers a new task
+     */
+    public fun register(name: String, init: TaskDsl.() -> Unit = {}) {
+        parent.block("tasks.register(\"$name\")") {
+            createConfigurator(this).apply(init)
+        }
+    }
+
+    /**
+     * Registers a typed task
+     */
+    public fun register(name: String, type: String, init: TaskDsl.() -> Unit = {}) {
+        parent.block("tasks.register<$type>(\"$name\")") {
+            createConfigurator(this).apply(init)
+        }
+    }
+}
 
 /**
  * DSL for Gradle tasks
@@ -27,23 +60,34 @@ public class TaskDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
      * Sets task dependencies
      */
-    public fun dependsOn(task: String) {
-        line("dependsOn(\"$task\")")
+    public fun dependsOn(vararg tasks: String) {
+        if (tasks.size == 1) {
+            line("dependsOn(\"${tasks[0]}\")")
+        } else {
+            val tasksStr = tasks.joinToString("\", \"", "\"", "\"")
+            line("dependsOn($tasksStr)")
+        }
     }
 
     /**
-     * Sets task group
+     * Group property
      */
-    public fun group(name: String) {
-        line("group = \"$name\"")
-    }
+    public var group: String by PropertyDelegate(parent)
 
     /**
-     * Sets task description
+     * Description property
      */
-    public fun description(text: String) {
-        line("description = \"$text\"")
-    }
+    public var description: String by PropertyDelegate(parent)
+
+    /**
+     * Type property
+     */
+    public var type: String by PropertyDelegate(parent) { "$it::class.java" }
+
+    /**
+     * Enabled property
+     */
+    public var enabled: Boolean by PropertyDelegate(parent)
 }
 
 /**

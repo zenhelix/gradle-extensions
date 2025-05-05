@@ -1,38 +1,32 @@
 package io.github.zenhelix.gradle.test.dsl.task.android
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
+import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectCollectionDsl
 
 /**
  * DSL for Android configuration
  */
 public class AndroidLibraryDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Sets the namespace
+     * Direct property assignment for namespace
      */
-    public fun namespace(value: String) {
-        line("namespace = \"$value\"")
-    }
+    public var namespace: String by PropertyDelegate(parent)
 
     /**
-     * Sets the compileSdk version
+     * Direct property assignment for compileSdk
      */
-    public fun compileSdk(version: Int) {
-        line("compileSdk = $version")
-    }
+    public var compileSdk: Int by PropertyDelegate(parent)
 
     /**
-     * Sets the compileSdkPreview version
+     * Direct property assignment for compileSdkPreview
      */
-    public fun compileSdkPreview(version: String) {
-        line("compileSdkPreview = \"$version\"")
-    }
+    public var compileSdkPreview: String by PropertyDelegate(parent)
 
     /**
-     * Sets the resourcePrefix
+     * Direct property assignment for resourcePrefix
      */
-    public fun resourcePrefix(prefix: String) {
-        line("resourcePrefix = \"$prefix\"")
-    }
+    public var resourcePrefix: String by PropertyDelegate(parent)
 
     /**
      * Configures defaultConfig block
@@ -101,8 +95,8 @@ public class AndroidLibraryDsl(private val parent: GradleDsl) : GradleDsl by par
      * Configures flavorDimensions
      */
     public fun flavorDimensions(vararg dimensions: String) {
-            val dimensionsStr = dimensions.joinToString("\", \"", "\"", "\"")
-            line("flavorDimensions += listOf($dimensionsStr)")
+        val dimensionsStr = dimensions.joinToString("\", \"", "\"", "\"")
+        line("flavorDimensions += listOf($dimensionsStr)")
     }
 
     /**
@@ -120,95 +114,70 @@ public class AndroidLibraryDsl(private val parent: GradleDsl) : GradleDsl by par
  */
 public class AndroidLibraryBuildFeaturesDsl(private val parent: GradleDsl) : GradleDsl by parent {
     /**
-     * Enables/disables viewBinding feature
+     * Direct property assignment for viewBinding
      */
-    public fun viewBinding(enabled: Boolean) {
-        line("viewBinding = $enabled")
-    }
+    public var viewBinding: Boolean by PropertyDelegate(parent)
 
     /**
-     * Enables/disables dataBinding feature
+     * Direct property assignment for dataBinding
      */
-    public fun dataBinding(enabled: Boolean) {
-        line("dataBinding = $enabled")
-    }
+    public var dataBinding: Boolean by PropertyDelegate(parent)
 
     /**
-     * Enables/disables compose feature
+     * Direct property assignment for compose
      */
-    public fun compose(enabled: Boolean) {
-        line("compose = $enabled")
-    }
+    public var compose: Boolean by PropertyDelegate(parent)
 
     /**
-     * Enables/disables buildConfig feature
+     * Direct property assignment for buildConfig
      */
-    public fun buildConfig(enabled: Boolean) {
-        line("buildConfig = $enabled")
-    }
+    public var buildConfig: Boolean by PropertyDelegate(parent)
 
     /**
-     * Enables/disables aidl feature
+     * Direct property assignment for aidl
      */
-    public fun aidl(enabled: Boolean) {
-        line("aidl = $enabled")
-    }
+    public var aidl: Boolean by PropertyDelegate(parent)
 
     /**
-     * Enables/disables renderScript feature
+     * Direct property assignment for renderScript
      */
-    public fun renderScript(enabled: Boolean) {
-        line("renderScript = $enabled")
-    }
+    public var renderScript: Boolean by PropertyDelegate(parent)
 
     /**
-     * Enables/disables resValues feature
+     * Direct property assignment for resValues
      */
-    public fun resValues(enabled: Boolean) {
-        line("resValues = $enabled")
-    }
+    public var resValues: Boolean by PropertyDelegate(parent)
 
     /**
-     * Enables/disables shaders feature
+     * Direct property assignment for shaders
      */
-    public fun shaders(enabled: Boolean) {
-        line("shaders = $enabled")
-    }
+    public var shaders: Boolean by PropertyDelegate(parent)
 }
 
 /**
  * DSL for Android defaultConfig
  */
 public class AndroidLibraryDefaultConfigDsl(private val parent: GradleDsl) : GradleDsl by parent {
-
     /**
-     * Sets the minimum SDK version
+     * Direct property assignment for minSdk
      */
-    public fun minSdk(version: Int) {
-        line("minSdk = $version")
-    }
+    public var minSdk: Int by PropertyDelegate(parent)
 
     /**
-     * Sets the target SDK version
+     * Direct property assignment for targetSdk
      */
     @Deprecated("deprecated in android plugins")
-    public fun targetSdk(version: Int) {
-        line("targetSdk = $version")
-    }
+    public var targetSdk: Int by PropertyDelegate(parent)
 
     /**
-     * Sets testInstrumentationRunner
+     * Direct property assignment for testInstrumentationRunner
      */
-    public fun testInstrumentationRunner(runner: String) {
-        line("testInstrumentationRunner = \"$runner\"")
-    }
+    public var testInstrumentationRunner: String by PropertyDelegate(parent)
 
     /**
-     * Sets test functions names
+     * Direct property assignment for testFunctionalTest
      */
-    public fun testFunctionalTest(value: Boolean) {
-        line("testFunctionalTest = $value")
-    }
+    public var testFunctionalTest: Boolean by PropertyDelegate(parent)
 
     /**
      * Adds a build config field
@@ -234,19 +203,21 @@ public class AndroidLibraryDefaultConfigDsl(private val parent: GradleDsl) : Gra
     }
 }
 
+/**
+ * Marker interface for Android product flavor
+ */
+public interface AndroidProductFlavor
 
 /**
  * DSL for Android productFlavors
  */
-public class AndroidLibraryProductFlavorsDsl(private val parent: GradleDsl) : GradleDsl by parent {
+public class AndroidLibraryProductFlavorsDsl(parent: GradleDsl) :
+    AbstractNamedDomainObjectCollectionDsl<AndroidProductFlavor, AndroidLibraryProductFlavorDsl>(parent) {
     /**
-     * Creates a product flavor with given name
+     * Creates the configurator for a product flavor
      */
-    public fun create(name: String, init: AndroidLibraryProductFlavorDsl.() -> Unit) {
-        block("create(\"$name\")") {
-            AndroidLibraryProductFlavorDsl(this).apply(init)
-        }
-    }
+    override fun createConfigurator(dsl: GradleDsl): AndroidLibraryProductFlavorDsl = AndroidLibraryProductFlavorDsl(dsl)
+
 }
 
 /**
@@ -256,9 +227,7 @@ public class AndroidLibraryProductFlavorDsl(private val parent: GradleDsl) : Gra
     /**
      * Sets the dimension
      */
-    public fun dimension(value: String) {
-        line("dimension = \"$value\"")
-    }
+    public var dimension: String by PropertyDelegate(parent)
 
     /**
      * Adds a build config field
@@ -314,23 +283,22 @@ public class AndroidLibraryBuildTypeDsl(private val parent: GradleDsl) : GradleD
     /**
      * Enables/disables minification
      */
-    public fun minifyEnabled(enabled: Boolean) {
-        line("isMinifyEnabled = $enabled")
-    }
+    public var isMinifyEnabled: Boolean by PropertyDelegate(parent)
 
     /**
      * Sets debuggable property
      */
-    public fun jniDebuggable(value: Boolean) {
-        line("isJniDebuggable = $value")
-    }
+    public var isDebuggable: Boolean by PropertyDelegate(parent)
+
+    /**
+     * Sets jniDebuggable property
+     */
+    public var isJniDebuggable: Boolean by PropertyDelegate(parent)
 
     /**
      * Sets shrinkResources property
      */
-    public fun shrinkResources(value: Boolean) {
-        line("isShrinkResources = $value")
-    }
+    public var isShrinkResources: Boolean by PropertyDelegate(parent)
 
     /**
      * Adds a build config field
