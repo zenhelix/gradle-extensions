@@ -43,7 +43,7 @@ public class BuildGradleDsl : GradleDslImpl() {
      */
     public fun plugins(init: PluginsDsl.() -> Unit) {
         block("plugins") {
-            PluginsDsl(this).apply(init)
+            withDsl(PluginsDsl(this), init)
         }
     }
 

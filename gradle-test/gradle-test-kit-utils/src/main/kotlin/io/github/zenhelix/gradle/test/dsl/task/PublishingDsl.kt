@@ -1,5 +1,6 @@
 package io.github.zenhelix.gradle.test.dsl.task
 
+import io.github.zenhelix.gradle.test.dsl.DslPath
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
 import io.github.zenhelix.gradle.test.dsl.gradle.AbstractPolymorphicDomainObjectContainerDsl
 import io.github.zenhelix.gradle.test.dsl.gradle.RepositoryHandlerDsl
@@ -8,17 +9,18 @@ import io.github.zenhelix.gradle.test.dsl.gradle.RepositoryHandlerDsl
  * DSL for publishing block
  */
 public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent {
+    override val dslPath: DslPath = parent.dslPath.append("publishing")
 
     private val publicationsDsl = PublicationsDsl(this)
 
     /**
-     * Возвращает ссылку на publications для использования в других DSL
+     * Доступ к публикациям
      */
     public val publications: PublicationsDsl
         get() = publicationsDsl
 
     /**
-     * Configures repositories for publishing
+     * Конфигурирует репозитории для публикаций
      */
     public fun repositories(init: RepositoryHandlerDsl.() -> Unit) {
         block("repositories") {
@@ -27,11 +29,11 @@ public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent 
     }
 
     /**
-     * Configures publications
+     * Конфигурирует публикации
      */
     public fun publications(init: PublicationsDsl.() -> Unit) {
         block("publications") {
-            publicationsDsl.apply(init)
+            withDsl(publicationsDsl, init)
         }
     }
 }
@@ -45,8 +47,9 @@ public interface Publication
  * DSL for publications
  */
 public class PublicationsDsl(
-    parent: GradleDsl
+    override val parent: GradleDsl
 ) : AbstractPolymorphicDomainObjectContainerDsl<Publication, MavenPublicationDsl>(parent, "publications") {
+    override val dslPath: DslPath = parent.dslPath.append("publications")
 
     /**
      * Создает конфигуратор для публикации

@@ -1,5 +1,6 @@
 package io.github.zenhelix.gradle.test.dsl.gradle
 
+import io.github.zenhelix.gradle.test.dsl.DslPath
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
 
 /**
@@ -8,7 +9,7 @@ import io.github.zenhelix.gradle.test.dsl.GradleDsl
  * @param T базовый тип объектов в контейнере
  * @param C тип конфигуратора для объектов в контейнере
  */
-public interface PolymorphicDomainObjectContainerDsl<T, C> : NamedDomainObjectCollectionDsl<T, C> {
+public interface PolymorphicDomainObjectContainerDsl<T, C : GradleDsl> : NamedDomainObjectCollectionDsl<T, C> {
 
     /**
      * Создает объект указанного типа
@@ -34,21 +35,21 @@ public interface PolymorphicDomainObjectContainerDsl<T, C> : NamedDomainObjectCo
  * @param T базовый тип объектов в контейнере
  * @param C тип конфигуратора для объектов
  */
-public abstract class AbstractPolymorphicDomainObjectContainerDsl<T, C>(
+public abstract class AbstractPolymorphicDomainObjectContainerDsl<T, C : GradleDsl>(
     parent: GradleDsl,
     collectionName: String = ""
 ) : AbstractNamedDomainObjectCollectionDsl<T, C>(parent, collectionName),
     PolymorphicDomainObjectContainerDsl<T, C> {
 
     override fun <S : T> create(type: String, name: String, init: C.() -> Unit) {
-        val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
+        val prefix = if (dslPath.isCurrentContext(collectionName)) "" else "$collectionName."
         parent.block("${prefix}create<$type>(\"$name\")") {
-            createConfigurator(this).apply(init)
+            withDsl(createConfigurator(this), init)
         }
     }
 
     override fun registerType(type: String, implementationType: String) {
-        val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
+        val prefix = if (dslPath.isCurrentContext(collectionName)) "" else "$collectionName."
         parent.line("${prefix}registerBinding(bind($type::class.java, $implementationType::class.java))")
     }
 }
@@ -59,7 +60,7 @@ public abstract class AbstractPolymorphicDomainObjectContainerDsl<T, C>(
  * @param T тип объектов в коллекции
  * @param C тип конфигуратора/обработчика для элементов коллекции
  */
-public interface NamedDomainObjectCollectionDsl<T, C> {
+public interface NamedDomainObjectCollectionDsl<T, C : GradleDsl> {
 
     /**
      * Получает родительский DSL контекст
@@ -67,15 +68,22 @@ public interface NamedDomainObjectCollectionDsl<T, C> {
     public val parent: GradleDsl
 
     /**
-     * Получает имя коллекции, по умолчанию пустая строка
+     * Получает имя коллекции
      */
     public val collectionName: String
         get() = ""
 
     /**
+     * Получает полный путь DSL, включая имя коллекции
+     */
+    public val dslPath: DslPath
+        get() = if (collectionName.isEmpty()) parent.dslPath
+        else parent.dslPath.append(collectionName)
+
+    /**
      * Возвращает ссылку на эту коллекцию для использования в других DSL
      */
-    public fun asReference(): DslReference<T> = DslReference(collectionName.ifEmpty { "this" })
+    public fun asReference(): DslReference<T> = DslReference(dslPath, parent.dslPath)
 
     /**
      * Создает конфигуратор/обработчик для элементов этой коллекции
@@ -86,9 +94,9 @@ public interface NamedDomainObjectCollectionDsl<T, C> {
      * Получает объект по имени и конфигурирует его
      */
     public fun getByName(name: String, init: C.() -> Unit) {
-        val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
+        val prefix = if (dslPath.isCurrentContext(collectionName)) "" else "$collectionName."
         parent.block("${prefix}getByName(\"$name\")") {
-            createConfigurator(this).apply(init)
+            withDsl(createConfigurator(this), init)
         }
     }
 
@@ -96,9 +104,9 @@ public interface NamedDomainObjectCollectionDsl<T, C> {
      * Получает объект по имени, используя Provider API
      */
     public fun named(name: String, init: C.() -> Unit) {
-        val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
+        val prefix = if (dslPath.isCurrentContext(collectionName)) "" else "$collectionName."
         parent.block("${prefix}named(\"$name\")") {
-            createConfigurator(this).apply(init)
+            withDsl(createConfigurator(this), init)
         }
     }
 
@@ -106,9 +114,9 @@ public interface NamedDomainObjectCollectionDsl<T, C> {
      * Создает новый именованный объект в коллекции
      */
     public fun create(name: String, init: C.() -> Unit) {
-        val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
+        val prefix = if (dslPath.isCurrentContext(collectionName)) "" else "$collectionName."
         parent.block("${prefix}create(\"$name\")") {
-            createConfigurator(this).apply(init)
+            withDsl(createConfigurator(this), init)
         }
     }
 
@@ -116,9 +124,9 @@ public interface NamedDomainObjectCollectionDsl<T, C> {
      * Конфигурирует все объекты в коллекции
      */
     public fun all(init: C.() -> Unit) {
-        val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
+        val prefix = if (dslPath.isCurrentContext(collectionName)) "" else "$collectionName."
         parent.block("${prefix}all") {
-            createConfigurator(this).apply(init)
+            withDsl(createConfigurator(this), init)
         }
     }
 
@@ -126,9 +134,9 @@ public interface NamedDomainObjectCollectionDsl<T, C> {
      * Конфигурирует каждый объект в коллекции (более эффективно для больших коллекций)
      */
     public fun configureEach(init: C.() -> Unit) {
-        val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
+        val prefix = if (dslPath.isCurrentContext(collectionName)) "" else "$collectionName."
         parent.block("${prefix}configureEach") {
-            createConfigurator(this).apply(init)
+            withDsl(createConfigurator(this), init)
         }
     }
 
@@ -145,9 +153,9 @@ public interface NamedDomainObjectCollectionDsl<T, C> {
      * Фильтрует объекты по типу и конфигурирует их
      */
     public fun withType(type: String, init: C.() -> Unit) {
-        val prefix = if (collectionName.isNotEmpty()) "$collectionName." else ""
+        val prefix = if (dslPath.isCurrentContext(collectionName)) "" else "$collectionName."
         parent.block("${prefix}withType<$type>()") {
-            createConfigurator(this).apply(init)
+            withDsl(createConfigurator(this), init)
         }
     }
 }
@@ -155,7 +163,7 @@ public interface NamedDomainObjectCollectionDsl<T, C> {
 /**
  * Базовая реализация NamedDomainObjectCollectionDsl
  */
-public abstract class AbstractNamedDomainObjectCollectionDsl<T, C>(
+public abstract class AbstractNamedDomainObjectCollectionDsl<T, C : GradleDsl>(
     override val parent: GradleDsl,
     override val collectionName: String = ""
 ) : NamedDomainObjectCollectionDsl<T, C>, GradleDsl by parent

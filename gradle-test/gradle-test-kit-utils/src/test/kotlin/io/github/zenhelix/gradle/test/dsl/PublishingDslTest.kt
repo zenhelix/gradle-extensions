@@ -119,7 +119,7 @@ class PublishingDslTest {
                     create<MavenPublication>("java") {
                         from(components["java"])
                     }
-                    withType<MavenPublication> {
+                    withType<MavenPublication>() {
                         pom {
                             name = "Test Project"
                             description = "A test project for Gradle DSL"
