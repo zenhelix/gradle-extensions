@@ -34,7 +34,7 @@ public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent 
      */
     public fun publications(init: PublicationsDsl.() -> Unit) {
         block("publications") {
-            withDsl(publicationsDsl, init)
+            withDsl(this@PublishingDsl.publicationsDsl, init)
         }
     }
 }

@@ -2,9 +2,13 @@ package io.github.zenhelix.gradle.test.dsl
 
 import io.github.zenhelix.gradle.test.dsl.utils.FieldFormatter
 
+@DslMarker
+public annotation class GradlePluginTestDsl
+
 /**
  * Base interface for building Gradle files content
  */
+@GradlePluginTestDsl
 public interface GradleDsl {
     /**
      * Adds a line to the content
@@ -50,6 +54,7 @@ public interface GradleDsl {
 /**
  * Base implementation of GradleDsl for building Gradle file contents
  */
+@GradlePluginTestDsl
 public open class GradleDslImpl(
     override val dslPath: DslPath = DslPath.ROOT
 ) : GradleDsl {

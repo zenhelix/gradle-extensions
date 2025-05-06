@@ -8,11 +8,10 @@ internal object FieldFormatter {
         else -> value.toString()
     }
 
-    private fun formatStringValue(value: String): String {
-        return if (value.contains('\n') || value.contains('\r') || value.contains('"')) {
-            "\"\"\"${value.replace("\"\"\"", "\"\"\" + \"\"\"")}\"\"\""
-        } else {
-            "\"$value\""
-        }
+    private fun formatStringValue(value: String): String = if (value.contains('\n') || value.contains('\r') || value.contains('"')) {
+        "\"\"\"${value.replace("\"\"\"", "\"\"\" + \"\"\"")}\"\"\""
+    } else {
+        "\"$value\""
     }
+
 }
