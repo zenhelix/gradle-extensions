@@ -1,7 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl.task.android
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
-import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
+import io.github.zenhelix.gradle.test.dsl.utils.PropertyDelegate
 import org.gradle.api.JavaVersion
 
 /**
@@ -49,7 +49,7 @@ public class AndroidSourceSetsDsl(private val parent: GradleDsl) : GradleDsl by 
      * Configures named source set
      */
     public fun named(name: String, init: AndroidSourceSetDsl.() -> Unit) {
-        block("named(\"$name\")") {
+        block("named(${formatValue(name)})") {
             AndroidSourceSetDsl(this).apply(init)
         }
     }
@@ -87,7 +87,7 @@ public class AndroidSourceSetDsl(private val parent: GradleDsl) : GradleDsl by p
      * Sets manifest.srcFile property
      */
     public fun manifest(file: String) {
-        line("manifest.srcFile(\"$file\")")
+        line("manifest.srcFile(${formatValue(file)})")
     }
 }
 

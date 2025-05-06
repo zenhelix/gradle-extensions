@@ -13,17 +13,13 @@ public class SettingsGradleDsl : GradleDslImpl() {
         paths.forEach { path ->
             line("import $path")
         }
-        if (paths.isNotEmpty()) {
-            line("")
-        }
     }
 
     /**
      * Sets the root project name
      */
     public fun rootProjectName(name: String) {
-        line("rootProject.name = \"$name\"")
-        line("")
+        line("rootProject.name = ${formatValue(name)}")
     }
 
     /**
@@ -38,7 +34,6 @@ public class SettingsGradleDsl : GradleDslImpl() {
             line("    $modulesList")
             line(")")
         }
-        line("")
     }
 
     /**
@@ -48,7 +43,6 @@ public class SettingsGradleDsl : GradleDslImpl() {
         block("dependencyResolutionManagement") {
             DependencyManagementDsl(this).apply(init)
         }
-        line("")
     }
 
     /**
@@ -58,7 +52,6 @@ public class SettingsGradleDsl : GradleDslImpl() {
         block("pluginManagement") {
             PluginManagementDsl(this).apply(init)
         }
-        line("")
     }
 }
 
@@ -93,7 +86,7 @@ public class VersionCatalogsDsl(private val parent: GradleDsl) : GradleDsl by pa
      * Creates a catalog
      */
     public fun create(name: String, init: VersionCatalogDsl.() -> Unit) {
-        block("create(\"$name\")") {
+        block("create(${formatValue(name)})") {
             VersionCatalogDsl(this).apply(init)
         }
     }
@@ -107,21 +100,21 @@ public class VersionCatalogDsl(private val parent: GradleDsl) : GradleDsl by par
      * Adds a version
      */
     public fun version(alias: String, version: String) {
-        line("version(\"$alias\", \"$version\")")
+        line("version(${formatValue(alias)}, ${formatValue(version)})")
     }
 
     /**
      * Adds a library
      */
     public fun library(alias: String, group: String, name: String, version: String) {
-        line("library(\"$alias\", \"$group\", \"$name\", \"$version\")")
+        line("library(${formatValue(alias)}, ${formatValue(group)}, ${formatValue(name)}, ${formatValue(version)})")
     }
 
     /**
      * Adds a plugin
      */
     public fun plugin(alias: String, id: String, version: String) {
-        line("plugin(\"$alias\", \"$id\", \"$version\")")
+        line("plugin(${formatValue(alias)}, ${formatValue(id)}, ${formatValue(version)})")
     }
 
     /**
@@ -129,7 +122,7 @@ public class VersionCatalogDsl(private val parent: GradleDsl) : GradleDsl by par
      */
     public fun bundle(alias: String, vararg libraries: String) {
         val libsStr = libraries.joinToString("\", \"", "\"", "\"")
-        line("bundle(\"$alias\", listOf($libsStr))")
+        line("bundle(${formatValue(alias)}, listOf($libsStr))")
     }
 }
 
@@ -164,7 +157,7 @@ public class PluginsSettingsDsl(private val parent: GradleDsl) : GradleDsl by pa
      * Adds a plugin with specified version
      */
     public fun id(pluginId: String, version: String) {
-        line("id(\"$pluginId\") version \"$version\"")
+        line("id(${formatValue(pluginId)}) version ${formatValue(version)}")
     }
 
 }

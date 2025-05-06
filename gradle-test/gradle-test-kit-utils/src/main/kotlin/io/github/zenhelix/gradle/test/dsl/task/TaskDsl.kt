@@ -1,8 +1,8 @@
 package io.github.zenhelix.gradle.test.dsl.task
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
-import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
 import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectCollectionDsl
+import io.github.zenhelix.gradle.test.dsl.utils.PropertyDelegate
 import org.gradle.api.Task
 
 /**
@@ -20,8 +20,8 @@ public class TasksDsl(parent: GradleDsl) :
      * Registers a new task
      */
     public fun register(name: String, init: TaskDsl.() -> Unit = {}) {
-        parent.block("tasks.register(\"$name\")") {
-            createConfigurator(this).apply(init)
+        parent.block("tasks.register(${formatValue(name)})") {
+            this@TasksDsl.createConfigurator(this).apply(init)
         }
     }
 
@@ -29,8 +29,8 @@ public class TasksDsl(parent: GradleDsl) :
      * Registers a typed task
      */
     public fun register(name: String, type: String, init: TaskDsl.() -> Unit = {}) {
-        parent.block("tasks.register<$type>(\"$name\")") {
-            createConfigurator(this).apply(init)
+        parent.block("tasks.register<$type>(${formatValue(name)})") {
+            this@TasksDsl.createConfigurator(this).apply(init)
         }
     }
 }
@@ -62,7 +62,7 @@ public class TaskDsl(private val parent: GradleDsl) : GradleDsl by parent {
      */
     public fun dependsOn(vararg tasks: String) {
         if (tasks.size == 1) {
-            line("dependsOn(\"${tasks[0]}\")")
+            line("dependsOn(${formatValue(tasks[0])})")
         } else {
             val tasksStr = tasks.joinToString("\", \"", "\"", "\"")
             line("dependsOn($tasksStr)")
@@ -98,7 +98,7 @@ public class TaskActionDsl(private val parent: GradleDsl) : GradleDsl by parent 
      * Creates file operations
      */
     public fun file(path: String, init: FileActionDsl.() -> Unit) {
-        block("file(\"$path\").apply") {
+        block("file(${formatValue(path)}).apply") {
             FileActionDsl(this).apply(init)
         }
     }
@@ -107,7 +107,7 @@ public class TaskActionDsl(private val parent: GradleDsl) : GradleDsl by parent 
      * Prints a message
      */
     public fun println(message: String) {
-        line("println(\"$message\")")
+        line("println(${formatValue(message)})")
     }
 }
 
@@ -126,7 +126,7 @@ public class FileActionDsl(private val parent: GradleDsl) : GradleDsl by parent 
      * Writes text to file
      */
     public fun writeText(text: String) {
-        line("writeText(\"\"\"$text\"\"\")")
+        line("writeText(${formatValue(text)})")
     }
 
     /**

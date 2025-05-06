@@ -10,6 +10,7 @@ import io.github.zenhelix.gradle.test.dsl.task.TaskDsl
 import io.github.zenhelix.gradle.test.dsl.task.TasksDsl
 import io.github.zenhelix.gradle.test.dsl.task.android.AndroidLibraryDsl
 import io.github.zenhelix.gradle.test.dsl.task.kotlin.KotlinMultiplatformDsl
+import io.github.zenhelix.gradle.test.dsl.utils.PropertyDelegate
 
 /**
  * Improved DSL for building build.gradle.kts content
@@ -32,9 +33,6 @@ public class BuildGradleDsl : GradleDslImpl() {
     public fun import(vararg paths: String) {
         paths.forEach { path ->
             line("import $path")
-        }
-        if (paths.isNotEmpty()) {
-            line("")
         }
     }
 
@@ -108,7 +106,7 @@ public class BuildGradleDsl : GradleDslImpl() {
      * Adds a project property
      */
     public fun property(name: String, value: String) {
-        line("project.extra[\"$name\"] = $value")
+        line("project.extra[${formatValue(name)}] = $value")
     }
 
     /**
@@ -206,7 +204,7 @@ public class BuildGradleDsl : GradleDslImpl() {
      * Adds an apply() function call
      */
     public fun apply(plugin: String) {
-        line("apply(plugin = \"$plugin\")")
+        line("apply(plugin = ${formatValue(plugin)})")
     }
 }
 
@@ -242,9 +240,9 @@ public class PluginsDsl(private val parent: GradleDsl) : GradleDsl by parent {
      */
     public fun id(pluginId: String, version: String? = null) {
         if (version != null) {
-            line("id(\"$pluginId\") version \"$version\"")
+            line("id(${formatValue(pluginId)}) version ${formatValue(version)}")
         } else {
-            line("id(\"$pluginId\")")
+            line("id(${formatValue(pluginId)})")
         }
     }
 
@@ -309,9 +307,9 @@ public class PluginsDsl(private val parent: GradleDsl) : GradleDsl by parent {
      */
     public fun kotlin(target: String, version: String? = null) {
         if (version != null) {
-            line("kotlin(\"$target\") version \"$version\"")
+            line("kotlin(${formatValue(target)}) version ${formatValue(version)}")
         } else {
-            line("kotlin(\"$target\")")
+            line("kotlin(${formatValue(target)})")
         }
     }
 

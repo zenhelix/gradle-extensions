@@ -23,20 +23,17 @@ class SettingsGradleDslTest {
 
         assertThat(content).isEqualTo("""
             rootProject.name = "test-project"
-            
             include(
                 ":module1",
                 ":module2"
             )
-            
             dependencyResolutionManagement {
                 repositories {
                     mavenCentral()
                     google()
                 }
             }
-
-
+            
         """.trimIndent())
     }
 

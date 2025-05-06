@@ -39,7 +39,7 @@ public class RepositoryHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
      */
     public fun maven(url: String, init: MavenRepositoryDsl.() -> Unit = {}) {
         block("maven") {
-            line("url = uri(\"$url\")")
+            line("url = uri(${formatValue(url)})")
             MavenRepositoryDsl(this).apply(init)
         }
     }
@@ -49,8 +49,8 @@ public class RepositoryHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
      */
     public fun maven(name: String, url: String, init: MavenRepositoryDsl.() -> Unit = {}) {
         block("maven") {
-            line("name = \"$name\"")
-            line("url = uri(\"$url\")")
+            line("name = ${formatValue(name)}")
+            line("url = uri(${formatValue(url)})")
             MavenRepositoryDsl(this).apply(init)
         }
     }
@@ -60,7 +60,7 @@ public class RepositoryHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
      */
     public fun ivy(url: String, init: IvyRepositoryDsl.() -> Unit = {}) {
         block("ivy") {
-            line("url = uri(\"$url\")")
+            line("url = uri(${formatValue(url)})")
             IvyRepositoryDsl(this).apply(init)
         }
     }
@@ -88,14 +88,14 @@ public class CredentialsDsl(private val parent: GradleDsl) : GradleDsl by parent
      * Sets the username
      */
     public fun username(value: String) {
-        line("username = \"$value\"")
+        line("username = ${formatValue(value)}")
     }
 
     /**
      * Sets the password
      */
     public fun password(value: String) {
-        line("password = \"$value\"")
+        line("password = ${formatValue(value)}")
     }
 }
 
@@ -130,14 +130,14 @@ public class MavenAuthenticationDsl(private val parent: GradleDsl) : GradleDsl b
      * Creates basic authentication
      */
     public fun basic(name: String = "basic") {
-        line("create(\"$name\", BasicAuthentication::class.java)")
+        line("create(${formatValue(name)}, BasicAuthentication::class.java)")
     }
 
     /**
      * Creates digest authentication
      */
     public fun digest(name: String = "digest") {
-        line("create(\"$name\", DigestAuthentication::class.java)")
+        line("create(${formatValue(name)}, DigestAuthentication::class.java)")
     }
 }
 
@@ -149,7 +149,7 @@ public class MavenContentDsl(private val parent: GradleDsl) : GradleDsl by paren
      * Includes group
      */
     public fun includeGroup(group: String) {
-        line("includeGroup(\"$group\")")
+        line("includeGroup(${formatValue(group)})")
     }
 
     /**
@@ -157,7 +157,7 @@ public class MavenContentDsl(private val parent: GradleDsl) : GradleDsl by paren
      */
     public fun includeGroups(vararg groups: String) {
         groups.forEach { group ->
-            line("includeGroup(\"$group\")")
+            line("includeGroup(${formatValue(group)})")
         }
     }
 
@@ -165,21 +165,21 @@ public class MavenContentDsl(private val parent: GradleDsl) : GradleDsl by paren
      * Includes module
      */
     public fun includeModule(group: String, module: String) {
-        line("includeModule(\"$group\", \"$module\")")
+        line("includeModule(${formatValue(group)}, ${formatValue(module)})")
     }
 
     /**
      * Excludes group
      */
     public fun excludeGroup(group: String) {
-        line("excludeGroup(\"$group\")")
+        line("excludeGroup(${formatValue(group)})")
     }
 
     /**
      * Excludes module
      */
     public fun excludeModule(group: String, module: String) {
-        line("excludeModule(\"$group\", \"$module\")")
+        line("excludeModule(${formatValue(group)}, ${formatValue(module)})")
     }
 }
 
@@ -214,14 +214,14 @@ public class IvyPatternLayoutDsl(private val parent: GradleDsl) : GradleDsl by p
      * Adds an artifact pattern
      */
     public fun artifact(pattern: String) {
-        line("artifact(\"$pattern\")")
+        line("artifact(${formatValue(pattern)})")
     }
 
     /**
      * Adds an ivy pattern
      */
     public fun ivy(pattern: String) {
-        line("ivy(\"$pattern\")")
+        line("ivy(${formatValue(pattern)})")
     }
 }
 

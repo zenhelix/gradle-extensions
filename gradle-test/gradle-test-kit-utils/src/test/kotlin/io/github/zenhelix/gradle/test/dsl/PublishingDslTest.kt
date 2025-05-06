@@ -31,7 +31,7 @@ class PublishingDslTest {
 
             signing {
                 useInMemoryPgpKeys("dummy-key", "dummy-password")
-                sign(publishing.publications.asReference())
+                sign(publishing.publications)
             }
         }
 

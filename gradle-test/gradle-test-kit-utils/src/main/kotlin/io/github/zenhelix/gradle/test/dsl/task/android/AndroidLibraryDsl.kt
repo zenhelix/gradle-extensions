@@ -1,8 +1,8 @@
 package io.github.zenhelix.gradle.test.dsl.task.android
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
-import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
 import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectCollectionDsl
+import io.github.zenhelix.gradle.test.dsl.utils.PropertyDelegate
 
 /**
  * DSL for Android configuration
@@ -183,14 +183,14 @@ public class AndroidLibraryDefaultConfigDsl(private val parent: GradleDsl) : Gra
      * Adds a build config field
      */
     public fun buildConfigField(type: String, name: String, value: String) {
-        line("buildConfigField(\"$type\", \"$name\", \"$value\")")
+        line("buildConfigField(${formatValue(type)}, ${formatValue(name)}, ${formatValue(value)})")
     }
 
     /**
      * Adds a res value
      */
     public fun resValue(type: String, name: String, value: String) {
-        line("resValue(\"$type\", \"$name\", \"$value\")")
+        line("resValue(${formatValue(type)}, ${formatValue(name)}, ${formatValue(value)})")
     }
 
     /**
@@ -233,14 +233,14 @@ public class AndroidLibraryProductFlavorDsl(private val parent: GradleDsl) : Gra
      * Adds a build config field
      */
     public fun buildConfigField(type: String, name: String, value: String) {
-        line("buildConfigField(\"$type\", \"$name\", \"$value\")")
+        line("buildConfigField(${formatValue(type)}, ${formatValue(name)}, ${formatValue(value)})")
     }
 
     /**
      * Adds a res value
      */
     public fun resValue(type: String, name: String, value: String) {
-        line("resValue(\"$type\", \"$name\", \"$value\")")
+        line("resValue(${formatValue(type)}, ${formatValue(name)}, ${formatValue(value)})")
     }
 }
 
@@ -270,7 +270,7 @@ public class AndroidLibraryBuildTypesDsl(private val parent: GradleDsl) : Gradle
      * Creates a custom build type
      */
     public fun create(name: String, init: AndroidLibraryBuildTypeDsl.() -> Unit) {
-        block("create(\"$name\")") {
+        block("create(${formatValue(name)})") {
             AndroidLibraryBuildTypeDsl(this).apply(init)
         }
     }
@@ -304,14 +304,14 @@ public class AndroidLibraryBuildTypeDsl(private val parent: GradleDsl) : GradleD
      * Adds a build config field
      */
     public fun buildConfigField(type: String, name: String, value: String) {
-        line("buildConfigField(\"$type\", \"$name\", \"$value\")")
+        line("buildConfigField(${formatValue(type)}, ${formatValue(name)}, ${formatValue(value)})")
     }
 
     /**
      * Adds a res value
      */
     public fun resValue(type: String, name: String, value: String) {
-        line("resValue(\"$type\", \"$name\", \"$value\")")
+        line("resValue(${formatValue(type)}, ${formatValue(name)}, ${formatValue(value)})")
     }
 
     /**
