@@ -21,11 +21,6 @@ public interface GradleDsl {
     public fun block(name: String, params: String = "", init: GradleDsl.() -> Unit)
 
     /**
-     * Adds text as is
-     */
-    public fun raw(text: String)
-
-    /**
      * Returns the built file content
      */
     public fun build(): String
@@ -36,13 +31,6 @@ public interface GradleDsl {
     public val dslPath: DslPath
 
     public fun <T : GradleDsl> withDsl(dsl: T, init: T.() -> Unit)
-
-    /**
-     * Property delegation for DSL properties
-     */
-    public operator fun <T> setValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>, value: T) {
-        line("${property.name} = ${formatValue(value)}")
-    }
 
     /**
      * Formats a value for output in generated code
@@ -86,25 +74,7 @@ public open class GradleDslImpl(
         content.append("    ".repeat(indent)).append("}\n")
     }
 
-    override fun raw(text: String) {
-        text.lines().forEach { line(it) }
-    }
-
     override fun build(): String = content.toString()
-
-    /**
-     * Creates a child DSL with updated path
-     */
-    protected open fun createChildDsl(blockName: String): GradleDslImpl {
-        return GradleDslImpl(dslPath.append(blockName))
-    }
-
-    /**
-     * Property delegation support - implemented from GradleDsl interface
-     */
-    override operator fun <T> setValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>, value: T) {
-        line("${property.name} = ${formatValue(value)}")
-    }
 
     override fun formatValue(value: Any?): String = FieldFormatter.formatValue(value)
 
