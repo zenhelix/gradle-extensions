@@ -1,7 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl.task
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
-import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
+import io.github.zenhelix.gradle.test.dsl.utils.PropertyDelegate
 import org.gradle.api.JavaVersion
 
 /**

@@ -10,6 +10,7 @@ import io.github.zenhelix.gradle.test.dsl.task.TaskDsl
 import io.github.zenhelix.gradle.test.dsl.task.TasksDsl
 import io.github.zenhelix.gradle.test.dsl.task.android.AndroidLibraryDsl
 import io.github.zenhelix.gradle.test.dsl.task.kotlin.KotlinMultiplatformDsl
+import io.github.zenhelix.gradle.test.dsl.utils.PropertyDelegate
 
 /**
  * Improved DSL for building build.gradle.kts content
@@ -32,9 +33,6 @@ public class BuildGradleDsl : GradleDslImpl() {
     public fun import(vararg paths: String) {
         paths.forEach { path ->
             line("import $path")
-        }
-        if (paths.isNotEmpty()) {
-            line("")
         }
     }
 

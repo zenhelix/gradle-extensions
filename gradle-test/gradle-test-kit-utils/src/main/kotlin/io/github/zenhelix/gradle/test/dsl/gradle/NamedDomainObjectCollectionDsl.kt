@@ -44,7 +44,7 @@ public abstract class AbstractPolymorphicDomainObjectContainerDsl<T, C : GradleD
     override fun <S : T> create(type: String, name: String, init: C.() -> Unit) {
         val prefix = if (dslPath.isCurrentContext(collectionName)) "" else "$collectionName."
         parent.block("${prefix}create<$type>(${formatValue(name)})") {
-            withDsl(createConfigurator(this), init)
+            withDsl(this@AbstractPolymorphicDomainObjectContainerDsl.createConfigurator(this), init)
         }
     }
 
@@ -166,4 +166,7 @@ public interface NamedDomainObjectCollectionDsl<T, C : GradleDsl> {
 public abstract class AbstractNamedDomainObjectCollectionDsl<T, C : GradleDsl>(
     override val parent: GradleDsl,
     override val collectionName: String = ""
-) : NamedDomainObjectCollectionDsl<T, C>, GradleDsl by parent
+) : NamedDomainObjectCollectionDsl<T, C>, GradleDsl by parent {
+    override val dslPath: DslPath
+        get() = parent.dslPath
+}

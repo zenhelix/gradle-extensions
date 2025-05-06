@@ -13,9 +13,6 @@ public class SettingsGradleDsl : GradleDslImpl() {
         paths.forEach { path ->
             line("import $path")
         }
-        if (paths.isNotEmpty()) {
-            line("")
-        }
     }
 
     /**
@@ -23,7 +20,6 @@ public class SettingsGradleDsl : GradleDslImpl() {
      */
     public fun rootProjectName(name: String) {
         line("rootProject.name = ${formatValue(name)}")
-        line("")
     }
 
     /**
@@ -38,7 +34,6 @@ public class SettingsGradleDsl : GradleDslImpl() {
             line("    $modulesList")
             line(")")
         }
-        line("")
     }
 
     /**
@@ -48,7 +43,6 @@ public class SettingsGradleDsl : GradleDslImpl() {
         block("dependencyResolutionManagement") {
             DependencyManagementDsl(this).apply(init)
         }
-        line("")
     }
 
     /**
@@ -58,7 +52,6 @@ public class SettingsGradleDsl : GradleDslImpl() {
         block("pluginManagement") {
             PluginManagementDsl(this).apply(init)
         }
-        line("")
     }
 }
 

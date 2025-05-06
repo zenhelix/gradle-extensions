@@ -1,8 +1,8 @@
 package io.github.zenhelix.gradle.test.dsl.task
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
-import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
 import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectCollectionDsl
+import io.github.zenhelix.gradle.test.dsl.utils.PropertyDelegate
 import org.gradle.api.Task
 
 /**
@@ -21,7 +21,7 @@ public class TasksDsl(parent: GradleDsl) :
      */
     public fun register(name: String, init: TaskDsl.() -> Unit = {}) {
         parent.block("tasks.register(${formatValue(name)})") {
-            createConfigurator(this).apply(init)
+            this@TasksDsl.createConfigurator(this).apply(init)
         }
     }
 
@@ -30,7 +30,7 @@ public class TasksDsl(parent: GradleDsl) :
      */
     public fun register(name: String, type: String, init: TaskDsl.() -> Unit = {}) {
         parent.block("tasks.register<$type>(${formatValue(name)})") {
-            createConfigurator(this).apply(init)
+            this@TasksDsl.createConfigurator(this).apply(init)
         }
     }
 }

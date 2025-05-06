@@ -2,8 +2,8 @@ package io.github.zenhelix.gradle.test.dsl.task
 
 import io.github.zenhelix.gradle.test.dsl.DslPath
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
-import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
-import io.github.zenhelix.gradle.test.dsl.gradle.DslReference
+import io.github.zenhelix.gradle.test.dsl.gradle.NamedDomainObjectCollectionDsl
+import io.github.zenhelix.gradle.test.dsl.utils.PropertyDelegate
 
 /**
  * DSL for signing
@@ -30,7 +30,7 @@ public class SigningDsl(private val parent: GradleDsl) : GradleDsl by parent {
      */
     public var isRequired: Boolean by PropertyDelegate(parent)
 
-    public fun sign(publicationsReference: DslReference<*>) {
-        line("sign($publicationsReference)")
+    public fun sign(publicationsReference: NamedDomainObjectCollectionDsl<*, *>) {
+        line("sign(${publicationsReference.asReference()})")
     }
 }

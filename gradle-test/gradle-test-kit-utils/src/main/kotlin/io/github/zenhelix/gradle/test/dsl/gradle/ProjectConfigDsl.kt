@@ -1,7 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl.gradle
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
-import io.github.zenhelix.gradle.test.dsl.PropertyDelegate
+import io.github.zenhelix.gradle.test.dsl.utils.PropertyDelegate
 
 /**
  * DSL for project configuration
