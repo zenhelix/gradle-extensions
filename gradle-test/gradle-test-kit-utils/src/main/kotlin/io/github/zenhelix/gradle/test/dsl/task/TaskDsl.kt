@@ -5,29 +5,17 @@ import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectCollec
 import io.github.zenhelix.gradle.test.dsl.utils.PropertyDelegate
 import org.gradle.api.Task
 
-/**
- * DSL for Gradle tasks
- */
 public class TasksDsl(parent: GradleDsl) :
     AbstractNamedDomainObjectCollectionDsl<Task, TaskDsl>(parent, "tasks") {
 
-    /**
-     * Creates the configurator for a task
-     */
     override fun createConfigurator(dsl: GradleDsl): TaskDsl = TaskDsl(dsl)
 
-    /**
-     * Registers a new task
-     */
     public fun register(name: String, init: TaskDsl.() -> Unit = {}) {
         parent.block("tasks.register(${formatValue(name)})") {
             this@TasksDsl.createConfigurator(this).apply(init)
         }
     }
 
-    /**
-     * Registers a typed task
-     */
     public fun register(name: String, type: String, init: TaskDsl.() -> Unit = {}) {
         parent.block("tasks.register<$type>(${formatValue(name)})") {
             this@TasksDsl.createConfigurator(this).apply(init)
@@ -35,31 +23,20 @@ public class TasksDsl(parent: GradleDsl) :
     }
 }
 
-/**
- * DSL for Gradle tasks
- */
 public class TaskDsl(private val parent: GradleDsl) : GradleDsl by parent {
-    /**
-     * Adds doLast block
-     */
+
     public fun doLast(init: TaskActionDsl.() -> Unit) {
         block("doLast") {
             TaskActionDsl(this).apply(init)
         }
     }
 
-    /**
-     * Adds doFirst block
-     */
     public fun doFirst(init: TaskActionDsl.() -> Unit) {
         block("doFirst") {
             TaskActionDsl(this).apply(init)
         }
     }
 
-    /**
-     * Sets task dependencies
-     */
     public fun dependsOn(vararg tasks: String) {
         if (tasks.size == 1) {
             line("dependsOn(${formatValue(tasks[0])})")
@@ -69,69 +46,38 @@ public class TaskDsl(private val parent: GradleDsl) : GradleDsl by parent {
         }
     }
 
-    /**
-     * Group property
-     */
     public var group: String by PropertyDelegate(parent)
 
-    /**
-     * Description property
-     */
     public var description: String by PropertyDelegate(parent)
 
-    /**
-     * Type property
-     */
     public var type: String by PropertyDelegate(parent) { "$it::class.java" }
 
-    /**
-     * Enabled property
-     */
     public var enabled: Boolean by PropertyDelegate(parent)
 }
 
-/**
- * DSL for task actions
- */
 public class TaskActionDsl(private val parent: GradleDsl) : GradleDsl by parent {
-    /**
-     * Creates file operations
-     */
+
     public fun file(path: String, init: FileActionDsl.() -> Unit) {
         block("file(${formatValue(path)}).apply") {
             FileActionDsl(this).apply(init)
         }
     }
 
-    /**
-     * Prints a message
-     */
     public fun println(message: String) {
         line("println(${formatValue(message)})")
     }
 }
 
-/**
- * DSL for file actions
- */
 public class FileActionDsl(private val parent: GradleDsl) : GradleDsl by parent {
-    /**
-     * Creates parent directories
-     */
+
     public fun mkdirs() {
         line("parentFile.mkdirs()")
     }
 
-    /**
-     * Writes text to file
-     */
     public fun writeText(text: String) {
         line("writeText(${formatValue(text)})")
     }
 
-    /**
-     * Deletes the file
-     */
     public fun delete() {
         line("delete()")
     }
