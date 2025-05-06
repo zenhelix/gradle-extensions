@@ -3,9 +3,6 @@ package io.github.zenhelix.gradle.test.dsl.utils
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
 import kotlin.reflect.KProperty
 
-/**
- * Property delegate for DSL properties
- */
 public class PropertyDelegate<T>(
     private val dsl: GradleDsl,
     private val propertyName: String? = null,
