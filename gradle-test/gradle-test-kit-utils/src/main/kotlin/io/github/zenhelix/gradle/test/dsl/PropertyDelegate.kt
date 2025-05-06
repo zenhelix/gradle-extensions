@@ -1,5 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl
 
+import io.github.zenhelix.gradle.test.dsl.utils.FieldFormatter
+
 /**
  * Property delegate for DSL properties
  */
@@ -14,17 +16,10 @@ public class PropertyDelegate<T>(
 
     public operator fun setValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>, value: T) {
         val name = propertyName ?: property.name
-        val formattedValue = customFormatter?.invoke(value) ?: formatValue(value)
+        val formattedValue = customFormatter?.invoke(value) ?: FieldFormatter.formatValue(value)
         dsl.line("$name = $formattedValue")
     }
 
-    private fun formatValue(value: Any?): String {
-        return when (value) {
-            is String -> "\"$value\""
-            is Boolean, is Number -> value.toString()
-            else -> value.toString()
-        }
-    }
 }
 
 /**

@@ -1,5 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl
 
+import io.github.zenhelix.gradle.test.dsl.utils.FieldFormatter
+
 /**
  * Base interface for building Gradle files content
  */
@@ -41,13 +43,8 @@ public interface GradleDsl {
     /**
      * Formats a value for output in generated code
      */
-    public fun formatValue(value: Any?): String {
-        return when (value) {
-            is String -> "\"$value\""
-            is Boolean, is Number -> value.toString()
-            else -> value.toString()
-        }
-    }
+    public fun formatValue(value: Any?): String
+
 }
 
 /**
@@ -66,6 +63,7 @@ public open class GradleDslImpl(
             content.append("\n")
         }
     }
+
     override fun <T : GradleDsl> withDsl(dsl: T, init: T.() -> Unit) {
         init(dsl)
     }
@@ -104,13 +102,8 @@ public open class GradleDslImpl(
         line("${property.name} = ${formatValue(value)}")
     }
 
-    override fun formatValue(value: Any?): String {
-        return when (value) {
-            is String -> "\"$value\""
-            is Boolean, is Number -> value.toString()
-            else -> value.toString()
-        }
-    }
+    override fun formatValue(value: Any?): String = FieldFormatter.formatValue(value)
+
 }
 
 /**

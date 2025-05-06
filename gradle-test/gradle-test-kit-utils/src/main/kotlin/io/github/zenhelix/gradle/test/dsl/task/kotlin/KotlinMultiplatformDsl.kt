@@ -51,7 +51,7 @@ public class KotlinMultiplatformDsl(private val parent: GradleDsl) : GradleDsl b
      */
     public fun jvm(name: String? = null, init: KotlinJvmTargetDsl.() -> Unit = {}) {
         if (name != null) {
-            block("jvm(\"$name\")") {
+            block("jvm(${formatValue(name)})") {
                 KotlinJvmTargetDsl(this).apply(init)
             }
         } else {
@@ -66,7 +66,7 @@ public class KotlinMultiplatformDsl(private val parent: GradleDsl) : GradleDsl b
      */
     public fun androidTarget(name: String? = null, init: KotlinAndroidTargetDsl.() -> Unit = {}) {
         if (name != null) {
-            block("androidTarget(\"$name\")") {
+            block("androidTarget(${formatValue(name)})") {
                 KotlinAndroidTargetDsl(this).apply(init)
             }
         } else {
@@ -117,7 +117,7 @@ public class KotlinMultiplatformDsl(private val parent: GradleDsl) : GradleDsl b
      */
     public fun js(name: String? = null, init: KotlinJsTargetDsl.() -> Unit = {}) {
         if (name != null) {
-            block("js(\"$name\")") {
+            block("js(${formatValue(name)})") {
                 KotlinJsTargetDsl(this).apply(init)
             }
         } else {
@@ -132,7 +132,7 @@ public class KotlinMultiplatformDsl(private val parent: GradleDsl) : GradleDsl b
      */
     public fun wasmJs(name: String? = null, init: KotlinWasmJsTargetDsl.() -> Unit = {}) {
         if (name != null) {
-            block("wasmJs(\"$name\")") {
+            block("wasmJs(${formatValue(name)})") {
                 KotlinWasmJsTargetDsl(this).apply(init)
             }
         } else {
@@ -158,9 +158,9 @@ public class KotlinMultiplatformDsl(private val parent: GradleDsl) : GradleDsl b
     public fun native(platform: KotlinNativePlatform, name: String? = null, init: (KotlinNativeTargetDsl.() -> Unit)? = null) {
         if (name != null) {
             if (init == null) {
-                line("${platform.id}(\"$name\")")
+                line("${platform.id}(${formatValue(name)})")
             } else {
-                block("${platform.id}(\"$name\")") {
+                block("${platform.id}(${formatValue(name)})") {
                     KotlinNativeTargetDsl(this).apply(init)
                 }
             }
@@ -494,7 +494,7 @@ public open class KotlinNativeBinaryDsl(private val parent: GradleDsl) : GradleD
      * Sets compilation options
      */
     public fun compilation(target: String) {
-        line("compilation = compilations.getByName(\"$target\")")
+        line("compilation = compilations.getByName(${formatValue(target)})")
     }
 
     /**
@@ -509,7 +509,7 @@ public open class KotlinNativeBinaryDsl(private val parent: GradleDsl) : GradleD
      * Sets entryPoint
      */
     public fun entryPoint(value: String) {
-        line("entryPoint = \"$value\"")
+        line("entryPoint = ${formatValue(value)}")
     }
 }
 
@@ -568,7 +568,7 @@ public class KotlinCompilationsDsl(private val parent: GradleDsl) : GradleDsl by
      * Configures a named compilation
      */
     public fun getByName(name: String, init: KotlinCompilationDsl.() -> Unit) {
-        block("getByName(\"$name\")") {
+        block("getByName(${formatValue(name)})") {
             KotlinCompilationDsl(this).apply(init)
         }
     }
@@ -582,14 +582,14 @@ public class KotlinCompilationDsl(private val parent: GradleDsl) : GradleDsl by 
      * Sets the compilation default source set
      */
     public fun defaultSourceSet(sourceSets: String) {
-        line("defaultSourceSet = sourceSets.getByName(\"$sourceSets\")")
+        line("defaultSourceSet = sourceSets.getByName(${formatValue(sourceSets)})")
     }
 
     /**
      * Adds a source set to the compilation
      */
     public fun associateWith(sourceSet: String) {
-        line("associateWith(sourceSets.getByName(\"$sourceSet\"))")
+        line("associateWith(sourceSets.getByName(${formatValue(sourceSet)}))")
     }
 
     /**
@@ -619,7 +619,7 @@ public class KotlinAttributesDsl(private val parent: GradleDsl) : GradleDsl by p
      * Adds an attribute
      */
     public fun attribute(key: String, value: String) {
-        line("attribute(Attribute.of(\"$key\", String::class.java), \"$value\")")
+        line("attribute(Attribute.of(${formatValue(key)}, String::class.java), ${formatValue(value)})")
     }
 }
 
@@ -749,7 +749,7 @@ public class KotlinSourceSetDsl(private val parent: GradleDsl) : GradleDsl by pa
      * Configures source directories
      */
     public fun kotlin(srcDir: String) {
-        line("kotlin.srcDir(\"$srcDir\")")
+        line("kotlin.srcDir(${formatValue(srcDir)})")
     }
 
     /**
@@ -764,7 +764,7 @@ public class KotlinSourceSetDsl(private val parent: GradleDsl) : GradleDsl by pa
      * Configures resource directories
      */
     public fun resources(srcDir: String) {
-        line("resources.srcDir(\"$srcDir\")")
+        line("resources.srcDir(${formatValue(srcDir)})")
     }
 
     /**
@@ -785,49 +785,49 @@ public class KotlinDependenciesDsl(private val parent: GradleDsl) : GradleDsl by
      * Adds implementation dependency
      */
     public fun implementation(dependency: String) {
-        line("implementation(\"$dependency\")")
+        line("implementation(${formatValue(dependency)})")
     }
 
     /**
      * Adds API dependency
      */
     public fun api(dependency: String) {
-        line("api(\"$dependency\")")
+        line("api(${formatValue(dependency)})")
     }
 
     /**
      * Adds compileOnly dependency
      */
     public fun compileOnly(dependency: String) {
-        line("compileOnly(\"$dependency\")")
+        line("compileOnly(${formatValue(dependency)})")
     }
 
     /**
      * Adds runtimeOnly dependency
      */
     public fun runtimeOnly(dependency: String) {
-        line("runtimeOnly(\"$dependency\")")
+        line("runtimeOnly(${formatValue(dependency)})")
     }
 
     /**
      * Adds test implementation dependency
      */
     public fun testImplementation(dependency: String) {
-        line("testImplementation(\"$dependency\")")
+        line("testImplementation(${formatValue(dependency)})")
     }
 
     /**
      * Adds a project dependency
      */
     public fun implementation(project: ProjectDependency) {
-        line("implementation(project(\"${project.path}\"))")
+        line("implementation(project(${formatValue(project.path)}))")
     }
 
     /**
      * Adds a project API dependency
      */
     public fun api(project: ProjectDependency) {
-        line("api(project(\"${project.path}\"))")
+        line("api(project(${formatValue(project.path)}))")
     }
 }
 

@@ -43,7 +43,7 @@ public abstract class AbstractPolymorphicDomainObjectContainerDsl<T, C : GradleD
 
     override fun <S : T> create(type: String, name: String, init: C.() -> Unit) {
         val prefix = if (dslPath.isCurrentContext(collectionName)) "" else "$collectionName."
-        parent.block("${prefix}create<$type>(\"$name\")") {
+        parent.block("${prefix}create<$type>(${formatValue(name)})") {
             withDsl(createConfigurator(this), init)
         }
     }

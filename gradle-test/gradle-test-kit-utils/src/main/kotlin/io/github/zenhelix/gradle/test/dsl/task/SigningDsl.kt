@@ -15,7 +15,7 @@ public class SigningDsl(private val parent: GradleDsl) : GradleDsl by parent {
      * Uses in-memory PGP keys
      */
     public fun useInMemoryPgpKeys(key: String, password: String) {
-        line("useInMemoryPgpKeys(\"$key\", \"$password\")")
+        line("useInMemoryPgpKeys(${formatValue(key)}, ${formatValue(password)})")
     }
 
     /**

@@ -8,9 +8,9 @@ public class DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
      */
     public fun classpath(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
         if (init == {}) {
-            line("classpath(\"$dependency\")")
+            line("classpath(${formatValue(dependency)})")
         } else {
-            block("classpath(\"$dependency\")") {
+            block("classpath(${formatValue(dependency)})") {
                 DependencyConfigDsl(this).apply(init)
             }
         }
@@ -21,9 +21,9 @@ public class DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
      */
     public fun implementation(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
         if (init == {}) {
-            line("implementation(\"$dependency\")")
+            line("implementation(${formatValue(dependency)})")
         } else {
-            block("implementation(\"$dependency\")") {
+            block("implementation(${formatValue(dependency)})") {
                 DependencyConfigDsl(this).apply(init)
             }
         }
@@ -34,9 +34,9 @@ public class DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
      */
     public fun testImplementation(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
         if (init == {}) {
-            line("testImplementation(\"$dependency\")")
+            line("testImplementation(${formatValue(dependency)})")
         } else {
-            block("testImplementation(\"$dependency\")") {
+            block("testImplementation(${formatValue(dependency)})") {
                 DependencyConfigDsl(this).apply(init)
             }
         }
@@ -47,9 +47,9 @@ public class DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
      */
     public fun api(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
         if (init == {}) {
-            line("api(\"$dependency\")")
+            line("api(${formatValue(dependency)})")
         } else {
-            block("api(\"$dependency\")") {
+            block("api(${formatValue(dependency)})") {
                 DependencyConfigDsl(this).apply(init)
             }
         }
@@ -60,9 +60,9 @@ public class DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
      */
     public fun compileOnly(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
         if (init == {}) {
-            line("compileOnly(\"$dependency\")")
+            line("compileOnly(${formatValue(dependency)})")
         } else {
-            block("compileOnly(\"$dependency\")") {
+            block("compileOnly(${formatValue(dependency)})") {
                 DependencyConfigDsl(this).apply(init)
             }
         }
@@ -73,9 +73,9 @@ public class DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
      */
     public fun runtimeOnly(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
         if (init == {}) {
-            line("runtimeOnly(\"$dependency\")")
+            line("runtimeOnly(${formatValue(dependency)})")
         } else {
-            block("runtimeOnly(\"$dependency\")") {
+            block("runtimeOnly(${formatValue(dependency)})") {
                 DependencyConfigDsl(this).apply(init)
             }
         }
@@ -86,9 +86,9 @@ public class DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
      */
     public fun developmentOnly(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
         if (init == {}) {
-            line("developmentOnly(\"$dependency\")")
+            line("developmentOnly(${formatValue(dependency)})")
         } else {
-            block("developmentOnly(\"$dependency\")") {
+            block("developmentOnly(${formatValue(dependency)})") {
                 DependencyConfigDsl(this).apply(init)
             }
         }
@@ -99,9 +99,9 @@ public class DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
      */
     public fun annotationProcessor(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
         if (init == {}) {
-            line("annotationProcessor(\"$dependency\")")
+            line("annotationProcessor(${formatValue(dependency)})")
         } else {
-            block("annotationProcessor(\"$dependency\")") {
+            block("annotationProcessor(${formatValue(dependency)})") {
                 DependencyConfigDsl(this).apply(init)
             }
         }
@@ -112,9 +112,9 @@ public class DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
      */
     public fun kapt(dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
         if (init == {}) {
-            line("kapt(\"$dependency\")")
+            line("kapt(${formatValue(dependency)})")
         } else {
-            block("kapt(\"$dependency\")") {
+            block("kapt(${formatValue(dependency)})") {
                 DependencyConfigDsl(this).apply(init)
             }
         }
@@ -124,14 +124,14 @@ public class DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
      * Adds a platform dependency
      */
     public fun platform(dependency: String) {
-        line("implementation(platform(\"$dependency\"))")
+        line("implementation(platform(${formatValue(dependency)}))")
     }
 
     /**
      * Adds a projectDependency
      */
     public fun project(configuration: String, path: String) {
-        line("$configuration(project(\"$path\"))")
+        line("$configuration(project(${formatValue(path)}))")
     }
 
     /**
@@ -160,9 +160,9 @@ public class DependencyHandlerDsl(private val parent: GradleDsl) : GradleDsl by 
      */
     public fun custom(configuration: String, dependency: String, init: DependencyConfigDsl.() -> Unit = {}) {
         if (init == {}) {
-            line("$configuration(\"$dependency\")")
+            line("$configuration(${formatValue(dependency)})")
         } else {
-            block("$configuration(\"$dependency\")") {
+            block("$configuration(${formatValue(dependency)})") {
                 DependencyConfigDsl(this).apply(init)
             }
         }
@@ -185,7 +185,7 @@ public class DependencyConfigDsl(private val parent: GradleDsl) : GradleDsl by p
      */
     public fun capability(group: String, name: String, version: String) {
         block("capabilities") {
-            line("requireCapability(\"$group:$name:$version\")")
+            line("requireCapability(${formatValue("$group:$name:$version")}")
         }
     }
 
@@ -194,9 +194,9 @@ public class DependencyConfigDsl(private val parent: GradleDsl) : GradleDsl by p
      */
     public fun exclude(group: String, module: String? = null) {
         if (module != null) {
-            line("exclude(group = \"$group\", module = \"$module\")")
+            line("exclude(group = ${formatValue(group)}, module = ${formatValue(module)})")
         } else {
-            line("exclude(group = \"$group\")")
+            line("exclude(group = ${formatValue(group)})")
         }
     }
 }

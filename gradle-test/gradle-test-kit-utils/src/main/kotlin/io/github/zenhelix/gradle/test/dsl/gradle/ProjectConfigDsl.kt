@@ -53,7 +53,7 @@ public class ProjectConfigDsl(private val parent: GradleDsl) : GradleDsl by pare
      * Creates a property for subprojects
      */
     public fun property(name: String, value: String) {
-        line("project.extra[\"$name\"] = $value")
+        line("project.extra[${formatValue(name)}] = $value")
     }
 }
 
@@ -65,7 +65,7 @@ public class ApplyDsl(private val parent: GradleDsl) : GradleDsl by parent {
      * Applies a plugin
      */
     public fun plugin(id: String) {
-        line("plugin(\"$id\")")
+        line("plugin(${formatValue(id)})")
     }
 
 }
