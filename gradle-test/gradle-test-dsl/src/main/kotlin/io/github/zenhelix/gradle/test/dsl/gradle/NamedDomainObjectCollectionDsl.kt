@@ -1,7 +1,7 @@
 package io.github.zenhelix.gradle.test.dsl.gradle
 
-import io.github.zenhelix.gradle.test.dsl.DslPath
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.utils.DslPath
 import io.github.zenhelix.gradle.test.dsl.utils.DslReference
 
 public interface NamedDomainObjectCollectionDsl<T, C : GradleDsl> {
