@@ -1,26 +1,14 @@
 package io.github.zenhelix.gradle.test.dsl.task
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
-import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectCollectionDsl
+import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectContainerDsl
 import io.github.zenhelix.gradle.test.dsl.utils.PropertyDelegate
 import org.gradle.api.Task
 
-public class TasksDsl(parent: GradleDsl) :
-    AbstractNamedDomainObjectCollectionDsl<Task, TaskDsl>(parent, "tasks") {
+public class TasksDsl(parent: GradleDsl) : AbstractNamedDomainObjectContainerDsl<Task, TaskDsl>(parent, "tasks") {
 
     override fun createConfigurator(dsl: GradleDsl): TaskDsl = TaskDsl(dsl)
 
-    public fun register(name: String, init: TaskDsl.() -> Unit = {}) {
-        parent.block("tasks.register(${formatValue(name)})") {
-            this@TasksDsl.createConfigurator(this).apply(init)
-        }
-    }
-
-    public fun register(name: String, type: String, init: TaskDsl.() -> Unit = {}) {
-        parent.block("tasks.register<$type>(${formatValue(name)})") {
-            this@TasksDsl.createConfigurator(this).apply(init)
-        }
-    }
 }
 
 public class TaskDsl(private val parent: GradleDsl) : GradleDsl by parent {

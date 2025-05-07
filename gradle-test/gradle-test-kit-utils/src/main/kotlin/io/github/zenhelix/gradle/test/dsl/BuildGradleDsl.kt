@@ -114,11 +114,15 @@ public class BuildGradleDsl : GradleDslImpl() {
     }
 
     public fun task(name: String, init: TaskDsl.() -> Unit = {}) {
-        tasksDsl.register(name, init)
+        block("task(${formatValue(name)})") {
+            TaskDsl(this).apply(init)
+        }
     }
 
     public fun task(name: String, type: String, init: TaskDsl.() -> Unit = {}) {
-        tasksDsl.register(name, type, init)
+        block("task<$type>(${formatValue(name)})") {
+            TaskDsl(this).apply(init)
+        }
     }
 
     public fun afterEvaluate(init: GradleDsl.() -> Unit) {
