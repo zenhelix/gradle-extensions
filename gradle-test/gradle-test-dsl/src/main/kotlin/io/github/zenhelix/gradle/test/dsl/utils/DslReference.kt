@@ -1,8 +1,8 @@
-package io.github.zenhelix.gradle.test.dsl.gradle
+package io.github.zenhelix.gradle.test.dsl.utils
 
 import io.github.zenhelix.gradle.test.dsl.DslPath
 
-public class DslReference<T>(
+public class DslReference(
     private val targetPath: DslPath,
     private val currentPath: DslPath
 ) {
