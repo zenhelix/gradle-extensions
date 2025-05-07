@@ -36,9 +36,6 @@ public class PublicationsDsl(
 
     override fun createConfigurator(dsl: GradleDsl): MavenPublicationDsl = MavenPublicationDsl(dsl)
 
-    public fun mavenPublication(name: String, init: MavenPublicationDsl.() -> Unit) {
-        create<MavenPublication>("MavenPublication", name, init)
-    }
 }
 
 public class MavenPublicationDsl(private val parent: GradleDsl) : GradleDsl by parent {

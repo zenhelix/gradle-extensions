@@ -24,7 +24,7 @@ class PublishingDslTest {
                 }
 
                 publications {
-                    mavenPublication("java") {
+                    create<MavenPublication>("java") {
                         fromComponent("java")
                     }
                 }
@@ -77,7 +77,7 @@ class PublishingDslTest {
 
             publishing {
                 publications {
-                    mavenPublication("java") {
+                    create<MavenPublication>("java") {
                         fromComponent("java")
                     }
 
@@ -164,7 +164,7 @@ class PublishingDslTest {
                 }
 
                 publications {
-                    mavenPublication("java") {
+                    create<MavenPublication>("java") {
                         fromComponent("java")
                     }
                 }
