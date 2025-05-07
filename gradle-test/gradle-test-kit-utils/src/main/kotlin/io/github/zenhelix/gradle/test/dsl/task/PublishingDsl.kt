@@ -2,7 +2,7 @@ package io.github.zenhelix.gradle.test.dsl.task
 
 import io.github.zenhelix.gradle.test.dsl.DslPath
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
-import io.github.zenhelix.gradle.test.dsl.gradle.AbstractPolymorphicDomainObjectContainerDsl
+import io.github.zenhelix.gradle.test.dsl.gradle.AbstractNamedDomainObjectContainerDsl
 import io.github.zenhelix.gradle.test.dsl.gradle.RepositoryHandlerDsl
 import io.github.zenhelix.gradle.test.dsl.utils.PropertyDelegate
 
@@ -27,18 +27,15 @@ public class PublishingDsl(private val parent: GradleDsl) : GradleDsl by parent 
     }
 }
 
-public interface Publication
+public interface MavenPublication
 
 public class PublicationsDsl(
     override val parent: GradleDsl
-) : AbstractPolymorphicDomainObjectContainerDsl<Publication, MavenPublicationDsl>(parent, "publications") {
+) : AbstractNamedDomainObjectContainerDsl<MavenPublication, MavenPublicationDsl>(parent, "publications") {
     override val dslPath: DslPath = parent.dslPath.append("publications")
 
     override fun createConfigurator(dsl: GradleDsl): MavenPublicationDsl = MavenPublicationDsl(dsl)
 
-    public fun mavenPublication(name: String, init: MavenPublicationDsl.() -> Unit) {
-        create<Publication>("MavenPublication", name, init)
-    }
 }
 
 public class MavenPublicationDsl(private val parent: GradleDsl) : GradleDsl by parent {

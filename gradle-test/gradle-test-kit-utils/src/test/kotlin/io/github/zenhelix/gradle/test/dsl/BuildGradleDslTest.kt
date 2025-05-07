@@ -1,5 +1,6 @@
 package io.github.zenhelix.gradle.test.dsl
 
+import io.github.zenhelix.gradle.test.dsl.task.MavenPublication
 import io.github.zenhelix.gradle.test.dsl.task.kotlin.KotlinJvmTarget
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -50,7 +51,7 @@ class BuildGradleDslTest {
                 }
 
                 publications {
-                    mavenPublication("javaLib") {
+                    create<MavenPublication>("javaLib") {
                         fromComponent("java")
                         pom {
                             description = "Test library"
@@ -214,7 +215,7 @@ class BuildGradleDslTest {
 
         assertThat(content).isEqualTo(
             """
-            tasks.register("createTestFile") {
+            task("createTestFile") {
                 group = "build"
                 description = "Creates a test file"
                 doLast {

@@ -2,7 +2,9 @@ package io.github.zenhelix.gradle.test.dsl.gradle
 
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
 
-public class RepositoryHandlerDsl(private val parent: GradleDsl) : GradleDsl by parent {
+public class RepositoryHandlerDsl(parent: GradleDsl) : AbstractNamedDomainObjectCollectionDsl<Any, RepositoryHandlerDsl>(parent, "repositories") {
+
+    override fun createConfigurator(dsl: GradleDsl): RepositoryHandlerDsl = RepositoryHandlerDsl(dsl)
 
     public fun mavenLocal() {
         line("mavenLocal()")
