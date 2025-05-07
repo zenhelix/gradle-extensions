@@ -12,6 +12,7 @@ include("gradle-utils")
 project("gradle-test") {
     include("gradle-test-all")
     include("gradle-test-kit-utils")
+    include("gradle-test-dsl")
     include("gradle-assertions")
 }
 

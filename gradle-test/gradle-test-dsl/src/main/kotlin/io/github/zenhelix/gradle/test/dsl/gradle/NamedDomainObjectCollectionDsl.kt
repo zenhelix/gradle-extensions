@@ -1,7 +1,8 @@
 package io.github.zenhelix.gradle.test.dsl.gradle
 
-import io.github.zenhelix.gradle.test.dsl.DslPath
 import io.github.zenhelix.gradle.test.dsl.GradleDsl
+import io.github.zenhelix.gradle.test.dsl.utils.DslPath
+import io.github.zenhelix.gradle.test.dsl.utils.DslReference
 
 public interface NamedDomainObjectCollectionDsl<T, C : GradleDsl> {
 
@@ -14,7 +15,7 @@ public interface NamedDomainObjectCollectionDsl<T, C : GradleDsl> {
         get() = if (collectionName.isEmpty()) parent.dslPath
         else parent.dslPath.append(collectionName)
 
-    public fun asReference(): DslReference<T> = DslReference(dslPath, parent.dslPath)
+    public fun asReference(): DslReference = DslReference(dslPath, parent.dslPath)
 
     public fun createConfigurator(dsl: GradleDsl): C
 
@@ -102,21 +103,21 @@ public abstract class AbstractNamedDomainObjectContainerDsl<T, C : GradleDsl>(
     public inline fun <reified S : T> create(name: String, noinline init: C.() -> Unit) {
         val prefix = getContextPrefix()
         parent.block("${prefix}create<${S::class.simpleName}>(${formatValue(name)})") {
-            withDsl(this@AbstractNamedDomainObjectContainerDsl.createConfigurator(this), init)
+            withDsl(createConfigurator(this), init)
         }
     }
 
     override fun <S : T> create(type: String, name: String, init: C.() -> Unit) {
         val prefix = getContextPrefix()
         parent.block("${prefix}create<$type>(${formatValue(name)})") {
-            withDsl(this@AbstractNamedDomainObjectContainerDsl.createConfigurator(this), init)
+            withDsl(createConfigurator(this), init)
         }
     }
 
     override fun <S : T> register(type: String, name: String, init: C.() -> Unit) {
         val prefix = getContextPrefix()
         parent.block("${prefix}register<$type>(${formatValue(name)})") {
-            withDsl(this@AbstractNamedDomainObjectContainerDsl.createConfigurator(this), init)
+            withDsl(createConfigurator(this), init)
         }
     }
 
